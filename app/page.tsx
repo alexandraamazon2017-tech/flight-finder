@@ -47,9 +47,12 @@ export default function Home() {
   const [selectedChainId, setSelectedChainId] = useState<string | null>(null)
   const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined)
 
-  const search = async () => {
-    if (!origin.code) { setError('Selectează orașul de plecare.'); return }
-    if (mode === 'calendar' && !destination.code) { setError('Selectează destinația.'); return }
+  const search = async (overrides?: { origin?: { code: string; label: string }; destination?: { code: string; label: string } }) => {
+    const o = overrides?.origin ?? origin
+    const d = overrides?.destination ?? destination
+
+    if (!o.code) { setError('Selectează orașul de plecare.'); return }
+    if (mode === 'calendar' && !d.code) { setError('Selectează destinația.'); return }
 
     setError('')
     setLoading(true)
@@ -58,7 +61,7 @@ export default function Home() {
 
     try {
       if (mode === 'calendar') {
-        const params = new URLSearchParams({ origin: origin.code, destination: destination.code, month, tripType })
+        const params = new URLSearchParams({ origin: o.code, destination: d.code, month, tripType })
         const res = await fetch(`/api/flights/calendar?${params}`)
         const data = await res.json()
         if (data.error) { setError(data.error); return }
@@ -67,20 +70,19 @@ export default function Home() {
         setReturnFares(data.return || [])
         setNextDestinations([])
         if (outbound.length === 0) {
-          const rRes = await fetch(`/api/flights/routes?origin=${origin.code}`)
+          const rRes = await fetch(`/api/flights/routes?origin=${o.code}`)
           const rData = await rRes.json()
           setAvailableRoutes(rData.routes || [])
         } else {
           setAvailableRoutes([])
-          // fetch destinations from the destination airport
           setNextDestLoading(true)
-          fetch(`/api/flights/destinations?origin=${destination.code}`)
+          fetch(`/api/flights/destinations?origin=${d.code}`)
             .then(r => r.json())
-            .then(d => setNextDestinations(d.destinations || []))
+            .then(dd => setNextDestinations(dd.destinations || []))
             .finally(() => setNextDestLoading(false))
         }
       } else {
-        const params = new URLSearchParams({ origin: origin.code, month })
+        const params = new URLSearchParams({ origin: o.code, month })
         if (maxPrice) params.set('maxPrice', maxPrice)
         const res = await fetch(`/api/flights/inspire?${params}`)
         const data = await res.json()
@@ -309,11 +311,13 @@ export default function Home() {
                           destinations={nextDestinations}
                           loading={nextDestLoading}
                           onSelect={(code, label) => {
-                            setOrigin({ code: destination.code, label: destination.label })
-                            setDestination({ code, label })
-                            setSearched(false)
-                            setOutboundFares([])
+                            const newOrigin = { code: destination.code, label: destination.label }
+                            const newDest = { code, label }
+                            setOrigin(newOrigin)
+                            setDestination(newDest)
                             setNextDestinations([])
+                            window.scrollTo({ top: 0, behavior: 'smooth' })
+                            search({ origin: newOrigin, destination: newDest })
                           }}
                         />
                       </div>
