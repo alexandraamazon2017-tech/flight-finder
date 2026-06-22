@@ -251,7 +251,7 @@ export default function Home() {
               {error && <p className="text-red-400 text-sm mt-4">{error}</p>}
 
               <button
-                onClick={search}
+                onClick={() => search()}
                 disabled={loading}
                 className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
               >
