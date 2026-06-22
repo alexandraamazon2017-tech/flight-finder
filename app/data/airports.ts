@@ -50,6 +50,9 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'BLQ', city: 'Bologna', name: 'Guglielmo Marconi', country: 'Italia' },
   { iataCode: 'PSA', city: 'Pisa', name: 'Galileo Galilei', country: 'Italia' },
   { iataCode: 'CTA', city: 'Catania', name: 'Fontanarossa', country: 'Italia' },
+  { iataCode: 'CAG', city: 'Cagliari', name: 'Mario Mameli', country: 'Italia', aliases: ['sardinia', 'sardegna'] },
+  { iataCode: 'OLB', city: 'Olbia', name: 'Costa Smeralda', country: 'Italia', aliases: ['sardinia', 'sardegna'] },
+  { iataCode: 'AHO', city: 'Alghero', name: 'Fertilia', country: 'Italia', aliases: ['sardinia', 'sardegna'] },
   // France
   { iataCode: 'CDG', city: 'Paris', name: 'Charles de Gaulle', country: 'Franța' },
   { iataCode: 'ORY', city: 'Paris', name: 'Orly', country: 'Franța' },
