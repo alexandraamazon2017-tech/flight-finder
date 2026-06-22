@@ -6,8 +6,13 @@ import PriceCalendar, { Fare } from './components/PriceCalendar'
 import InspireResults from './components/InspireResults'
 import FlightChain, { SavedFlight } from './components/FlightChain'
 import NextDestinations from './components/NextDestinations'
+import MultihopResults from './components/MultihopResults'
+import { AIRPORTS } from './data/airports'
 
-type Mode = 'calendar' | 'inspire'
+const AIRPORT_LABEL_MAP = Object.fromEntries(AIRPORTS.map(a => [a.iataCode, `${a.city} (${a.iataCode})`]))
+const AIRPORT_CITY_MAP = Object.fromEntries(AIRPORTS.map(a => [a.iataCode, a.city]))
+
+type Mode = 'calendar' | 'inspire' | 'multihop'
 type TripType = 'oneway' | 'roundtrip'
 
 interface Destination {
@@ -41,6 +46,7 @@ export default function Home() {
   const [availableRoutes, setAvailableRoutes] = useState<{ code: string; city: string; country: string }[]>([])
   const [nextDestinations, setNextDestinations] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [nextDestLoading, setNextDestLoading] = useState(false)
+  const [multihopResult, setMultihopResult] = useState<{ direct: any; combos: any[] } | null>(null)
   const [originSuggestions, setOriginSuggestions] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [originSuggestionsLoading, setOriginSuggestionsLoading] = useState(false)
 
@@ -94,6 +100,13 @@ export default function Home() {
             .then(dd => setNextDestinations(dd.destinations || []))
             .finally(() => setNextDestLoading(false))
         }
+      } else if (mode === 'multihop') {
+        if (!d.code) { setError('Selectează destinația finală.'); return }
+        const params = new URLSearchParams({ origin: o.code, destination: d.code, month })
+        const res = await fetch(`/api/flights/multihop?${params}`)
+        const data = await res.json()
+        if (data.error) { setError(data.error); return }
+        setMultihopResult({ direct: data.direct, combos: data.combos || [] })
       } else {
         const params = new URLSearchParams({ origin: o.code, month })
         if (maxPrice) params.set('maxPrice', maxPrice)
@@ -186,7 +199,7 @@ export default function Home() {
           <div className="flex-1 min-w-0">
 
             {/* Mode tabs */}
-            <div className="flex gap-2 mb-6 bg-slate-800/60 p-1 rounded-xl w-fit">
+            <div className="flex gap-2 mb-6 bg-slate-800/60 p-1 rounded-xl w-fit flex-wrap">
               <button
                 onClick={() => { setMode('calendar'); setSearched(false) }}
                 className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${mode === 'calendar' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
@@ -198,6 +211,12 @@ export default function Home() {
                 className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${mode === 'inspire' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
               >
                 🌍 Unde zbor ieftin?
+              </button>
+              <button
+                onClick={() => { setMode('multihop'); setSearched(false) }}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${mode === 'multihop' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}
+              >
+                🔀 Rută în etape
               </button>
             </div>
 
@@ -220,19 +239,19 @@ export default function Home() {
                 </div>
               )}
 
-              <div className={`grid gap-4 ${mode === 'calendar' ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
+              <div className={`grid gap-4 ${mode === 'calendar' || mode === 'multihop' ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
                 <AirportSearch
                   label="De la"
                   value={origin.label}
                   onChange={(code, label) => setOrigin({ code, label })}
                   placeholder="București, Iași..."
                 />
-                {mode === 'calendar' && (
+                {(mode === 'calendar' || mode === 'multihop') && (
                   <AirportSearch
                     label="Până la"
                     value={destination.label}
                     onChange={(code, label) => setDestination({ code, label })}
-                    placeholder="Londra, Roma..."
+                    placeholder="Londra, Bali, New York..."
                   />
                 )}
                 <div>
@@ -268,7 +287,7 @@ export default function Home() {
                 disabled={loading}
                 className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
               >
-                {loading ? 'Se caută...' : mode === 'calendar' ? '🔍 Caută zile ieftine' : '🌍 Găsește destinații ieftine'}
+                {loading ? 'Se caută...' : mode === 'calendar' ? '🔍 Caută zile ieftine' : mode === 'multihop' ? '🔀 Caută cea mai ieftină rută' : '🌍 Găsește destinații ieftine'}
               </button>
             </div>
 
@@ -371,6 +390,20 @@ export default function Home() {
                       )}
                     </>
                   )
+                ) : mode === 'multihop' ? (
+                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    {multihopResult && (
+                      <MultihopResults
+                        origin={origin.code}
+                        originLabel={origin.label}
+                        destination={destination.code}
+                        destinationLabel={destination.label}
+                        direct={multihopResult.direct}
+                        combos={multihopResult.combos}
+                        hubNames={AIRPORT_CITY_MAP}
+                      />
+                    )}
+                  </div>
                 ) : (
                   <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
                     {inspireData.length === 0 ? (
