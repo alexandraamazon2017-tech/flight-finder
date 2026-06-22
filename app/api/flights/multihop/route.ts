@@ -73,12 +73,29 @@ export async function GET(request: NextRequest) {
   // Check for direct flight
   const directFare = leg1Map[destination] ?? null
 
-  // Take top 20 cheapest hubs (excluding direct destination)
-  const hubs = Object.entries(leg1Map)
+  // Major global connecting hubs to always include even if not in leg1 results
+  const MAJOR_HUBS = [
+    'LHR','LGW','STN','CDG','ORY','AMS','FRA','MUC','BER','ZRH','VIE',
+    'IST','SAW','DXB','DOH','AUH','RUH','CAI',
+    'JFK','EWR','ORD','ATL','MIA','LAX','SFO','BOS','IAD',
+    'YYZ','YUL','YVR',
+    'GRU','EZE','BOG','LIM','SCL',
+    'NBO','JNB','ADD','LOS',
+    'DEL','BOM','BKK','SIN','KUL','CGK','HKG','PEK','PVG','ICN','NRT','HND',
+    'SYD','MEL',
+  ]
+
+  // All hubs from leg1 + major hubs not already found
+  const leg1Hubs = Object.entries(leg1Map)
     .filter(([dest]) => dest !== destination)
-    .sort(([, a], [, b]) => a.price - b.price)
-    .slice(0, 20)
     .map(([dest, fare]) => ({ dest, ...fare }))
+
+  const leg1Codes = new Set(leg1Hubs.map(h => h.dest))
+  const extraHubs = MAJOR_HUBS
+    .filter(h => h !== origin && h !== destination && !leg1Codes.has(h))
+    .map(h => ({ dest: h, price: Infinity, date: '', airline: '', transfers: 0 }))
+
+  const hubs = [...leg1Hubs, ...extraHubs]
 
   // Leg 2: for each hub, find cheapest to destination (parallel)
   const leg2Results = await Promise.all(
