@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import AirportSearch from './components/AirportSearch'
 import PriceCalendar, { Fare } from './components/PriceCalendar'
 import InspireResults from './components/InspireResults'
@@ -41,6 +41,19 @@ export default function Home() {
   const [availableRoutes, setAvailableRoutes] = useState<{ code: string; city: string; country: string }[]>([])
   const [nextDestinations, setNextDestinations] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [nextDestLoading, setNextDestLoading] = useState(false)
+  const [originSuggestions, setOriginSuggestions] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
+  const [originSuggestionsLoading, setOriginSuggestionsLoading] = useState(false)
+
+  useEffect(() => {
+    if (!origin.code) { setOriginSuggestions([]); return }
+    setOriginSuggestionsLoading(true)
+    setOriginSuggestions([])
+    fetch(`/api/flights/destinations?origin=${origin.code}`)
+      .then(r => r.json())
+      .then(d => setOriginSuggestions(d.destinations || []))
+      .catch(() => setOriginSuggestions([]))
+      .finally(() => setOriginSuggestionsLoading(false))
+  }, [origin.code])
 
   // Flight chain state
   const [chain, setChain] = useState<SavedFlight[]>([])
@@ -258,6 +271,22 @@ export default function Home() {
                 {loading ? 'Se caută...' : mode === 'calendar' ? '🔍 Caută zile ieftine' : '🌍 Găsește destinații ieftine'}
               </button>
             </div>
+
+            {/* Origin suggestions — shown before search */}
+            {mode === 'calendar' && !searched && (originSuggestions.length > 0 || originSuggestionsLoading) && (
+              <div className="bg-slate-900 border border-slate-700 rounded-2xl p-5 mb-6">
+                <NextDestinations
+                  from={origin.code}
+                  fromLabel={origin.label}
+                  destinations={originSuggestions}
+                  loading={originSuggestionsLoading}
+                  onSelect={(code, label) => {
+                    setDestination({ code, label })
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                />
+              </div>
+            )}
 
             {/* Results */}
             {searched && (
