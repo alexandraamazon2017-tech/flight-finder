@@ -266,11 +266,14 @@ export default function Home() {
                   noResults ? (
                     <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
                       <p className="text-slate-300 font-semibold mb-1">
-                        Ruta {origin.label} → {destination.label} nu e operată de Ryanair sau Wizz Air.
+                        Nu s-au găsit zboruri pentru {origin.label} → {destination.label} în luna selectată.
+                      </p>
+                      <p className="text-slate-500 text-sm mb-4">
+                        Încearcă o altă lună sau verifică dacă ruta există.
                       </p>
                       {availableRoutes.length > 0 && (
                         <>
-                          <p className="text-slate-500 text-sm mb-4">Destinații disponibile din {origin.label} via Ryanair:</p>
+                          <p className="text-slate-500 text-sm mb-3">Destinații disponibile din {origin.label}:</p>
                           <div className="flex flex-wrap gap-2">
                             {availableRoutes.map(r => (
                               <button
