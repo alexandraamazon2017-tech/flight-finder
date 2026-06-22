@@ -1,5 +1,6 @@
 'use client'
 
+import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 import { AIRPORT_COORDS } from '../data/coords'
 import type { SavedFlight } from './FlightChain'
