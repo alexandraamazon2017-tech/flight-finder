@@ -40,7 +40,12 @@ export default function AirportSearch({ label, value, onChange, placeholder }: P
   const search = (q: string) => {
     setQuery(q)
     if (debounce.current) clearTimeout(debounce.current)
-    if (q.length < 2) { setResults([]); setOpen(false); return }
+    if (q.length < 2) {
+      setResults([])
+      setOpen(false)
+      if (q.length === 0) onChange('', '') // reset parent state when field cleared
+      return
+    }
     debounce.current = setTimeout(async () => {
       setLoading(true)
       try {
