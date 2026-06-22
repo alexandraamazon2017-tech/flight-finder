@@ -4,11 +4,13 @@ interface Combo {
   hub: string
   leg1Price: number
   leg1Date: string
+  leg1Time?: string
   leg1Airline: string
   leg1Transfers: number
   leg1Link: string
   leg2Price: number
   leg2Date: string
+  leg2Time?: string
   leg2Airline: string
   leg2Transfers: number
   leg2Link: string
@@ -125,7 +127,7 @@ export default function MultihopResults({ origin, originLabel, destination, dest
                   <div className="flex items-center justify-between gap-2 flex-wrap">
                     <div className="flex items-center gap-2 flex-wrap">
                       <AirlineBadge code={c.leg1Airline} transfers={c.leg1Transfers} />
-                      <span className="text-slate-500 text-xs">{c.leg1Date}</span>
+                      <span className="text-slate-500 text-xs">{c.leg1Date}{c.leg1Time && ` · ${c.leg1Time}`}</span>
                     </div>
                     <a
                       href={c.leg1Link}
@@ -139,6 +141,15 @@ export default function MultihopResults({ origin, originLabel, destination, dest
                   </div>
                 </div>
 
+                {/* Layover indicator */}
+                {c.leg1Date && c.leg2Date && c.leg1Date !== c.leg2Date && (
+                  <div className="flex items-center gap-2 px-3 py-1">
+                    <div className="flex-1 border-t border-dashed border-slate-700" />
+                    <span className="text-slate-500 text-xs shrink-0">🕐 escală în {c.hub} · {Math.round((new Date(c.leg2Date).getTime() - new Date(c.leg1Date).getTime()) / 86400000)}z</span>
+                    <div className="flex-1 border-t border-dashed border-slate-700" />
+                  </div>
+                )}
+
                 {/* Leg 2 */}
                 <div className="bg-slate-900/60 rounded-xl p-3">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -149,7 +160,7 @@ export default function MultihopResults({ origin, originLabel, destination, dest
                   <div className="flex items-center justify-between gap-2 flex-wrap">
                     <div className="flex items-center gap-2 flex-wrap">
                       <AirlineBadge code={c.leg2Airline} transfers={c.leg2Transfers} />
-                      <span className="text-slate-500 text-xs">{c.leg2Date}</span>
+                      <span className="text-slate-500 text-xs">{c.leg2Date}{c.leg2Time && ` · ${c.leg2Time}`}</span>
                     </div>
                     <a
                       href={c.leg2Link}
