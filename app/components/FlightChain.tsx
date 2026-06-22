@@ -87,8 +87,9 @@ export default function FlightChain({ flights, onRemove, onContinueFrom, selecte
                   rel="noopener noreferrer"
                   onClick={e => e.stopPropagation()}
                   className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-0.5 rounded-md transition shrink-0"
+                  title={`Cumpără pe ${f.source}`}
                 >
-                  Cumpără →
+                  {f.source === 'Ryanair' ? 'ryanair.com →' : 'Cumpără →'}
                 </a>
               )}
             </div>

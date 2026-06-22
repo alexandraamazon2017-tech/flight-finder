@@ -15,7 +15,7 @@ function bookingLink(origin: string, destination: string, date: string) {
 }
 
 function ryanairLink(origin: string, destination: string, date: string) {
-  return `https://www.ryanair.com/en/cheap-flights/${origin.toLowerCase()}-${destination.toLowerCase()}/?dateOut=${date}`
+  return `https://www.ryanair.com/en/cheap-flights/${origin.toLowerCase()}-to-${destination.toLowerCase()}/?dateOut=${date}`
 }
 
 async function getTravelpayoutsPerDay(origin: string, destination: string, month: string) {
