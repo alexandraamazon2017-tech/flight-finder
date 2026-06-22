@@ -5,6 +5,7 @@ import AirportSearch from './components/AirportSearch'
 import PriceCalendar, { Fare } from './components/PriceCalendar'
 import InspireResults from './components/InspireResults'
 import FlightChain, { SavedFlight } from './components/FlightChain'
+import NextDestinations from './components/NextDestinations'
 
 type Mode = 'calendar' | 'inspire'
 type TripType = 'oneway' | 'roundtrip'
@@ -37,6 +38,8 @@ export default function Home() {
   const [inspireData, setInspireData] = useState<Destination[]>([])
   const [searched, setSearched] = useState(false)
   const [availableRoutes, setAvailableRoutes] = useState<{ code: string; city: string; country: string }[]>([])
+  const [nextDestinations, setNextDestinations] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
+  const [nextDestLoading, setNextDestLoading] = useState(false)
 
   // Flight chain state
   const [chain, setChain] = useState<SavedFlight[]>([])
@@ -58,14 +61,22 @@ export default function Home() {
         const res = await fetch(`/api/flights/calendar?${params}`)
         const data = await res.json()
         if (data.error) { setError(data.error); return }
-        setOutboundFares(data.outbound || [])
+        const outbound = data.outbound || []
+        setOutboundFares(outbound)
         setReturnFares(data.return || [])
-        if ((data.outbound || []).length === 0) {
+        setNextDestinations([])
+        if (outbound.length === 0) {
           const rRes = await fetch(`/api/flights/routes?origin=${origin.code}`)
           const rData = await rRes.json()
           setAvailableRoutes(rData.routes || [])
         } else {
           setAvailableRoutes([])
+          // fetch destinations from the destination airport
+          setNextDestLoading(true)
+          fetch(`/api/flights/destinations?origin=${destination.code}`)
+            .then(r => r.json())
+            .then(d => setNextDestinations(d.destinations || []))
+            .finally(() => setNextDestLoading(false))
         }
       } else {
         const params = new URLSearchParams({ origin: origin.code, month })
@@ -273,6 +284,19 @@ export default function Home() {
                           selectedDate={selectedDate}
                         />
                         <TopFares fares={outboundFares} onSelect={handleSelectFare} selectedDate={selectedDate} />
+                        <NextDestinations
+                          from={destination.code}
+                          fromLabel={destination.label}
+                          destinations={nextDestinations}
+                          loading={nextDestLoading}
+                          onSelect={(code, label) => {
+                            setOrigin({ code: destination.code, label: destination.label })
+                            setDestination({ code, label })
+                            setSearched(false)
+                            setOutboundFares([])
+                            setNextDestinations([])
+                          }}
+                        />
                       </div>
 
                       {/* Return */}
