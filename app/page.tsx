@@ -92,6 +92,8 @@ export default function Home() {
       date: fare.date,
       price: fare.price,
       source: fare.source,
+      stops: fare.stops,
+      link: fare.link,
     }
     setChain(prev => [...prev, flight])
     setSelectedChainId(flight.id)
@@ -352,7 +354,18 @@ function TopFares({ fares, onSelect, selectedDate }: { fares: Fare[]; onSelect: 
               <span className={`font-bold ${i === 0 ? 'text-green-400 text-lg' : 'text-slate-300'}`}>
                 {Math.round(d.price)}€
               </span>
-              <span className="text-slate-600 text-xs">+ add</span>
+              {d.stops === 0 && <span className="text-green-600 text-xs">direct</span>}
+              {d.link && (
+                <a
+                  href={d.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-0.5 rounded-md transition"
+                >
+                  →
+                </a>
+              )}
             </div>
           </div>
         ))}

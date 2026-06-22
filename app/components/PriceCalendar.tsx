@@ -9,6 +9,8 @@ export interface Fare {
   price: number
   currency: string
   source: string
+  stops?: number
+  link?: string
 }
 
 interface Props {

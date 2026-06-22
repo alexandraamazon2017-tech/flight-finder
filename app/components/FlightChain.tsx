@@ -9,6 +9,8 @@ export interface SavedFlight {
   date: string
   price: number
   source: string
+  stops?: number
+  link?: string
 }
 
 interface Props {
@@ -58,6 +60,8 @@ export default function FlightChain({ flights, onRemove, onContinueFrom, selecte
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-slate-400 text-xs">{f.date}</span>
+                  {f.stops === 0 && <span className="text-green-500 text-xs">direct</span>}
+                  {f.stops != null && f.stops > 0 && <span className="text-yellow-500 text-xs">{f.stops} escală</span>}
                   <span className="text-slate-600 text-xs">{f.source}</span>
                 </div>
               </div>
@@ -72,9 +76,21 @@ export default function FlightChain({ flights, onRemove, onContinueFrom, selecte
                 </button>
               </div>
             </div>
-            {/* Continue hint */}
-            <div className={`text-xs mt-1.5 ml-6 transition ${selectedId === f.id ? 'text-blue-400' : 'text-slate-600 group-hover:text-slate-500'}`}>
-              {selectedId === f.id ? '← caută de la această destinație' : 'Click → continuă de aici'}
+            <div className="flex items-center justify-between mt-1.5 ml-6">
+              <div className={`text-xs transition ${selectedId === f.id ? 'text-blue-400' : 'text-slate-600 group-hover:text-slate-500'}`}>
+                {selectedId === f.id ? '← caută de la această destinație' : 'Click → continuă de aici'}
+              </div>
+              {f.link && (
+                <a
+                  href={f.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-0.5 rounded-md transition shrink-0"
+                >
+                  Cumpără →
+                </a>
+              )}
             </div>
           </div>
         ))}
