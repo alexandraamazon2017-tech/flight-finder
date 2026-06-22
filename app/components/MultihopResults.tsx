@@ -54,9 +54,11 @@ export default function MultihopResults({ origin, originLabel, destination, dest
         <h2 className="text-white font-bold text-lg">
           {originLabel} → {destinationLabel}
         </h2>
-        <span className="text-slate-400 text-sm">
-          Cel mai ieftin: <span className="text-green-400 font-bold text-lg">{Math.round(cheapestTotal)}€</span>
-        </span>
+        {cheapestTotal < Infinity && (
+          <span className="text-slate-400 text-sm">
+            Cel mai ieftin: <span className="text-green-400 font-bold text-lg">{Math.round(cheapestTotal)}€</span>
+          </span>
+        )}
       </div>
 
       {/* Direct flight */}
