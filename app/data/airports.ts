@@ -159,13 +159,249 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'VNO', city: 'Vilnius', name: 'Vilnius', country: 'Lituania' },
   // Estonia
   { iataCode: 'TLL', city: 'Tallinn', name: 'Lennart Meri', country: 'Estonia' },
+  // Israel
+  { iataCode: 'TLV', city: 'Tel Aviv', name: 'Ben Gurion', country: 'Israel', aliases: ['telaviv'] },
+  // Jordan
+  { iataCode: 'AMM', city: 'Amman', name: 'Queen Alia', country: 'Iordania' },
+  // Lebanon
+  { iataCode: 'BEY', city: 'Beirut', name: 'Rafic Hariri', country: 'Liban' },
+  // Saudi Arabia
+  { iataCode: 'RUH', city: 'Riyadh', name: 'King Khalid', country: 'Arabia Saudită' },
+  { iataCode: 'JED', city: 'Jeddah', name: 'King Abdulaziz', country: 'Arabia Saudită' },
+  // Qatar
+  { iataCode: 'DOH', city: 'Doha', name: 'Hamad', country: 'Qatar' },
+  // Kuwait
+  { iataCode: 'KWI', city: 'Kuwait City', name: 'Kuwait', country: 'Kuwait' },
+  // Bahrain
+  { iataCode: 'BAH', city: 'Manama', name: 'Bahrain', country: 'Bahrain' },
+  // Oman
+  { iataCode: 'MCT', city: 'Muscat', name: 'Muscat', country: 'Oman' },
+  // Georgia
+  { iataCode: 'TBS', city: 'Tbilisi', name: 'Shota Rustaveli', country: 'Georgia' },
+  { iataCode: 'BUS', city: 'Batumi', name: 'Batumi', country: 'Georgia' },
+  // Armenia
+  { iataCode: 'EVN', city: 'Erevan', name: 'Zvartnots', country: 'Armenia' },
+  // Azerbaijan
+  { iataCode: 'GYD', city: 'Baku', name: 'Heydar Aliyev', country: 'Azerbaidjan' },
+  // Kazakhstan
+  { iataCode: 'ALA', city: 'Almaty', name: 'Almaty', country: 'Kazahstan' },
+  { iataCode: 'NQZ', city: 'Astana', name: 'Nursultan Nazarbayev', country: 'Kazahstan', aliases: ['astana', 'nur-sultan'] },
+  // Uzbekistan
+  { iataCode: 'TAS', city: 'Tașkent', name: 'Islam Karimov', country: 'Uzbekistan' },
+  // Iran
+  { iataCode: 'IKA', city: 'Teheran', name: 'Imam Khomeini', country: 'Iran' },
+  // Pakistan
+  { iataCode: 'KHI', city: 'Karachi', name: 'Jinnah', country: 'Pakistan' },
+  { iataCode: 'LHE', city: 'Lahore', name: 'Allama Iqbal', country: 'Pakistan' },
+  { iataCode: 'ISB', city: 'Islamabad', name: 'Islamabad', country: 'Pakistan' },
+  // India
+  { iataCode: 'DEL', city: 'Delhi', name: 'Indira Gandhi', country: 'India', aliases: ['new delhi'] },
+  { iataCode: 'BOM', city: 'Mumbai', name: 'Chhatrapati Shivaji', country: 'India', aliases: ['bombay'] },
+  { iataCode: 'BLR', city: 'Bangalore', name: 'Kempegowda', country: 'India', aliases: ['bengaluru'] },
+  { iataCode: 'MAA', city: 'Chennai', name: 'Chennai', country: 'India', aliases: ['madras'] },
+  { iataCode: 'CCU', city: 'Kolkata', name: 'Netaji Subhas Chandra Bose', country: 'India', aliases: ['calcutta'] },
+  { iataCode: 'HYD', city: 'Hyderabad', name: 'Rajiv Gandhi', country: 'India' },
+  { iataCode: 'AMD', city: 'Ahmedabad', name: 'Sardar Vallabhbhai Patel', country: 'India' },
+  { iataCode: 'GOI', city: 'Goa', name: 'Goa', country: 'India' },
+  // Sri Lanka
+  { iataCode: 'CMB', city: 'Colombo', name: 'Bandaranaike', country: 'Sri Lanka' },
+  // Nepal
+  { iataCode: 'KTM', city: 'Kathmandu', name: 'Tribhuvan', country: 'Nepal' },
+  // Bangladesh
+  { iataCode: 'DAC', city: 'Dhaka', name: 'Hazrat Shahjalal', country: 'Bangladesh' },
   // Thailand
   { iataCode: 'BKK', city: 'Bangkok', name: 'Suvarnabhumi', country: 'Thailanda' },
+  { iataCode: 'DMK', city: 'Bangkok', name: 'Don Mueang', country: 'Thailanda' },
+  { iataCode: 'HKT', city: 'Phuket', name: 'Phuket', country: 'Thailanda' },
+  { iataCode: 'CNX', city: 'Chiang Mai', name: 'Chiang Mai', country: 'Thailanda' },
+  { iataCode: 'USM', city: 'Koh Samui', name: 'Samui', country: 'Thailanda' },
+  // Vietnam
+  { iataCode: 'SGN', city: 'Ho Chi Minh', name: 'Tan Son Nhat', country: 'Vietnam', aliases: ['saigon', 'hcmc'] },
+  { iataCode: 'HAN', city: 'Hanoi', name: 'Noi Bai', country: 'Vietnam' },
+  { iataCode: 'DAD', city: 'Da Nang', name: 'Da Nang', country: 'Vietnam' },
+  // Cambodia
+  { iataCode: 'PNH', city: 'Phnom Penh', name: 'Phnom Penh', country: 'Cambodgia' },
+  { iataCode: 'REP', city: 'Siem Reap', name: 'Angkor', country: 'Cambodgia', aliases: ['angkor', 'angkor wat'] },
+  // Myanmar
+  { iataCode: 'RGN', city: 'Rangoon', name: 'Yangon', country: 'Myanmar', aliases: ['yangon'] },
+  // Malaysia
+  { iataCode: 'KUL', city: 'Kuala Lumpur', name: 'KLIA', country: 'Malaysia' },
+  { iataCode: 'LGK', city: 'Langkawi', name: 'Langkawi', country: 'Malaysia' },
+  { iataCode: 'PEN', city: 'Penang', name: 'Penang', country: 'Malaysia' },
+  // Singapore
+  { iataCode: 'SIN', city: 'Singapore', name: 'Changi', country: 'Singapore' },
+  // Indonesia
+  { iataCode: 'CGK', city: 'Jakarta', name: 'Soekarno-Hatta', country: 'Indonezia' },
+  { iataCode: 'DPS', city: 'Bali', name: 'Ngurah Rai', country: 'Indonezia', aliases: ['denpasar'] },
+  { iataCode: 'SUB', city: 'Surabaya', name: 'Juanda', country: 'Indonezia' },
+  // Philippines
+  { iataCode: 'MNL', city: 'Manila', name: 'Ninoy Aquino', country: 'Filipine' },
+  { iataCode: 'CEB', city: 'Cebu', name: 'Mactan-Cebu', country: 'Filipine' },
   // Japan
   { iataCode: 'NRT', city: 'Tokyo', name: 'Narita', country: 'Japonia' },
+  { iataCode: 'HND', city: 'Tokyo', name: 'Haneda', country: 'Japonia' },
+  { iataCode: 'KIX', city: 'Osaka', name: 'Kansai', country: 'Japonia' },
+  { iataCode: 'ITM', city: 'Osaka', name: 'Itami', country: 'Japonia' },
+  { iataCode: 'NGO', city: 'Nagoya', name: 'Chubu Centrair', country: 'Japonia' },
+  { iataCode: 'CTS', city: 'Sapporo', name: 'New Chitose', country: 'Japonia' },
+  { iataCode: 'FUK', city: 'Fukuoka', name: 'Fukuoka', country: 'Japonia' },
+  { iataCode: 'OKA', city: 'Okinawa', name: 'Naha', country: 'Japonia' },
+  // South Korea
+  { iataCode: 'ICN', city: 'Seoul', name: 'Incheon', country: 'Coreea de Sud' },
+  { iataCode: 'GMP', city: 'Seoul', name: 'Gimpo', country: 'Coreea de Sud' },
+  { iataCode: 'PUS', city: 'Busan', name: 'Gimhae', country: 'Coreea de Sud' },
+  // China
+  { iataCode: 'PEK', city: 'Beijing', name: 'Capital', country: 'China', aliases: ['peking'] },
+  { iataCode: 'PKX', city: 'Beijing', name: 'Daxing', country: 'China' },
+  { iataCode: 'PVG', city: 'Shanghai', name: 'Pudong', country: 'China' },
+  { iataCode: 'SHA', city: 'Shanghai', name: 'Hongqiao', country: 'China' },
+  { iataCode: 'CAN', city: 'Guangzhou', name: 'Baiyun', country: 'China' },
+  { iataCode: 'SZX', city: 'Shenzhen', name: 'Bao\'an', country: 'China' },
+  { iataCode: 'CTU', city: 'Chengdu', name: 'Shuangliu', country: 'China' },
+  { iataCode: 'KMG', city: 'Kunming', name: 'Changshui', country: 'China' },
+  // Hong Kong
+  { iataCode: 'HKG', city: 'Hong Kong', name: 'Chek Lap Kok', country: 'Hong Kong' },
+  // Taiwan
+  { iataCode: 'TPE', city: 'Taipei', name: 'Taoyuan', country: 'Taiwan' },
+  // Mongolia
+  { iataCode: 'ULN', city: 'Ulaanbaatar', name: 'Chinggis Khaan', country: 'Mongolia' },
+  // Australia
+  { iataCode: 'SYD', city: 'Sydney', name: 'Kingsford Smith', country: 'Australia' },
+  { iataCode: 'MEL', city: 'Melbourne', name: 'Tullamarine', country: 'Australia' },
+  { iataCode: 'BNE', city: 'Brisbane', name: 'Brisbane', country: 'Australia' },
+  { iataCode: 'PER', city: 'Perth', name: 'Perth', country: 'Australia' },
+  { iataCode: 'ADL', city: 'Adelaide', name: 'Adelaide', country: 'Australia' },
+  { iataCode: 'CNS', city: 'Cairns', name: 'Cairns', country: 'Australia' },
+  // New Zealand
+  { iataCode: 'AKL', city: 'Auckland', name: 'Auckland', country: 'Noua Zeelandă' },
+  { iataCode: 'CHC', city: 'Christchurch', name: 'Christchurch', country: 'Noua Zeelandă' },
   // US
   { iataCode: 'JFK', city: 'New York', name: 'John F. Kennedy', country: 'SUA' },
+  { iataCode: 'EWR', city: 'New York', name: 'Newark', country: 'SUA' },
+  { iataCode: 'LGA', city: 'New York', name: 'LaGuardia', country: 'SUA' },
   { iataCode: 'LAX', city: 'Los Angeles', name: 'LAX', country: 'SUA' },
+  { iataCode: 'ORD', city: 'Chicago', name: "O'Hare", country: 'SUA' },
+  { iataCode: 'MDW', city: 'Chicago', name: 'Midway', country: 'SUA' },
+  { iataCode: 'MIA', city: 'Miami', name: 'Miami', country: 'SUA' },
+  { iataCode: 'ATL', city: 'Atlanta', name: 'Hartsfield-Jackson', country: 'SUA' },
+  { iataCode: 'SFO', city: 'San Francisco', name: 'San Francisco', country: 'SUA' },
+  { iataCode: 'SEA', city: 'Seattle', name: 'Sea-Tac', country: 'SUA' },
+  { iataCode: 'BOS', city: 'Boston', name: 'Logan', country: 'SUA' },
+  { iataCode: 'DFW', city: 'Dallas', name: 'Fort Worth', country: 'SUA' },
+  { iataCode: 'IAD', city: 'Washington', name: 'Dulles', country: 'SUA' },
+  { iataCode: 'DCA', city: 'Washington', name: 'Reagan', country: 'SUA' },
+  { iataCode: 'LAS', city: 'Las Vegas', name: 'Harry Reid', country: 'SUA' },
+  { iataCode: 'DEN', city: 'Denver', name: 'Denver', country: 'SUA' },
+  { iataCode: 'HNL', city: 'Honolulu', name: 'Daniel K. Inouye', country: 'SUA', aliases: ['hawaii'] },
+  { iataCode: 'MCO', city: 'Orlando', name: 'Orlando', country: 'SUA' },
+  { iataCode: 'PHX', city: 'Phoenix', name: 'Sky Harbor', country: 'SUA' },
+  { iataCode: 'IAH', city: 'Houston', name: 'George Bush', country: 'SUA' },
+  // Canada
+  { iataCode: 'YYZ', city: 'Toronto', name: 'Pearson', country: 'Canada' },
+  { iataCode: 'YUL', city: 'Montreal', name: 'Trudeau', country: 'Canada' },
+  { iataCode: 'YVR', city: 'Vancouver', name: 'Vancouver', country: 'Canada' },
+  { iataCode: 'YYC', city: 'Calgary', name: 'Calgary', country: 'Canada' },
+  { iataCode: 'YEG', city: 'Edmonton', name: 'Edmonton', country: 'Canada' },
+  // Mexico
+  { iataCode: 'MEX', city: 'Mexico City', name: 'Benito Juárez', country: 'Mexic', aliases: ['ciudad de mexico'] },
+  { iataCode: 'CUN', city: 'Cancún', name: 'Cancún', country: 'Mexic' },
+  { iataCode: 'GDL', city: 'Guadalajara', name: 'Miguel Hidalgo', country: 'Mexic' },
+  { iataCode: 'MTY', city: 'Monterrey', name: 'Mariano Escobedo', country: 'Mexic' },
+  { iataCode: 'PVR', city: 'Puerto Vallarta', name: 'Licenciado Gustavo Díaz Ordaz', country: 'Mexic' },
+  { iataCode: 'SJD', city: 'Los Cabos', name: 'Los Cabos', country: 'Mexic' },
+  // Cuba
+  { iataCode: 'HAV', city: 'Havana', name: 'José Martí', country: 'Cuba' },
+  { iataCode: 'VRA', city: 'Varadero', name: 'Juan Gualberto Gómez', country: 'Cuba' },
+  // Dominican Republic
+  { iataCode: 'PUJ', city: 'Punta Cana', name: 'Punta Cana', country: 'Rep. Dominicană' },
+  { iataCode: 'SDQ', city: 'Santo Domingo', name: 'Las Américas', country: 'Rep. Dominicană' },
+  // Jamaica
+  { iataCode: 'MBJ', city: 'Montego Bay', name: 'Sangster', country: 'Jamaica' },
+  { iataCode: 'KIN', city: 'Kingston', name: 'Norman Manley', country: 'Jamaica' },
+  // Barbados
+  { iataCode: 'BGI', city: 'Bridgetown', name: 'Grantley Adams', country: 'Barbados' },
+  // Trinidad
+  { iataCode: 'POS', city: 'Port of Spain', name: 'Piarco', country: 'Trinidad și Tobago' },
+  // Colombia
+  { iataCode: 'BOG', city: 'Bogotá', name: 'El Dorado', country: 'Columbia' },
+  { iataCode: 'MDE', city: 'Medellín', name: 'José María Córdova', country: 'Columbia' },
+  { iataCode: 'CTG', city: 'Cartagena', name: 'Rafael Núñez', country: 'Columbia' },
+  // Venezuela
+  { iataCode: 'CCS', city: 'Caracas', name: 'Simón Bolívar', country: 'Venezuela' },
+  // Peru
+  { iataCode: 'LIM', city: 'Lima', name: 'Jorge Chávez', country: 'Peru' },
+  { iataCode: 'CUZ', city: 'Cusco', name: 'Alejandro Velasco Astete', country: 'Peru', aliases: ['machu picchu', 'cuzco'] },
+  // Brazil
+  { iataCode: 'GRU', city: 'São Paulo', name: 'Guarulhos', country: 'Brazilia' },
+  { iataCode: 'CGH', city: 'São Paulo', name: 'Congonhas', country: 'Brazilia' },
+  { iataCode: 'GIG', city: 'Rio de Janeiro', name: 'Galeão', country: 'Brazilia' },
+  { iataCode: 'SDU', city: 'Rio de Janeiro', name: 'Santos Dumont', country: 'Brazilia' },
+  { iataCode: 'BSB', city: 'Brasília', name: 'Juscelino Kubitschek', country: 'Brazilia' },
+  { iataCode: 'SSA', city: 'Salvador', name: 'Deputado Luís Eduardo Magalhães', country: 'Brazilia' },
+  { iataCode: 'FOR', city: 'Fortaleza', name: 'Pinto Martins', country: 'Brazilia' },
+  { iataCode: 'REC', city: 'Recife', name: 'Guararapes', country: 'Brazilia' },
+  { iataCode: 'MAO', city: 'Manaus', name: 'Eduardo Gomes', country: 'Brazilia' },
+  // Argentina
+  { iataCode: 'EZE', city: 'Buenos Aires', name: 'Ezeiza', country: 'Argentina' },
+  { iataCode: 'AEP', city: 'Buenos Aires', name: 'Jorge Newbery', country: 'Argentina' },
+  { iataCode: 'COR', city: 'Córdoba', name: 'Ambrosio Taravella', country: 'Argentina' },
+  { iataCode: 'MDZ', city: 'Mendoza', name: 'El Plumerillo', country: 'Argentina' },
+  // Chile
+  { iataCode: 'SCL', city: 'Santiago', name: 'Arturo Merino Benítez', country: 'Chile' },
+  // Bolivia
+  { iataCode: 'VVI', city: 'Santa Cruz', name: 'Viru Viru', country: 'Bolivia' },
+  { iataCode: 'LPB', city: 'La Paz', name: 'El Alto', country: 'Bolivia' },
+  // Ecuador
+  { iataCode: 'UIO', city: 'Quito', name: 'Mariscal Sucre', country: 'Ecuador' },
+  { iataCode: 'GYE', city: 'Guayaquil', name: 'José Joaquín de Olmedo', country: 'Ecuador' },
+  // Paraguay
+  { iataCode: 'ASU', city: 'Asunción', name: 'Silvio Pettirossi', country: 'Paraguay' },
+  // Uruguay
+  { iataCode: 'MVD', city: 'Montevideo', name: 'Carrasco', country: 'Uruguay' },
+  // South Africa
+  { iataCode: 'JNB', city: 'Johannesburg', name: 'O.R. Tambo', country: 'Africa de Sud' },
+  { iataCode: 'CPT', city: 'Cape Town', name: 'Cape Town', country: 'Africa de Sud', aliases: ['capetown'] },
+  { iataCode: 'DUR', city: 'Durban', name: 'King Shaka', country: 'Africa de Sud' },
+  // Kenya
+  { iataCode: 'NBO', city: 'Nairobi', name: 'Jomo Kenyatta', country: 'Kenya' },
+  { iataCode: 'MBA', city: 'Mombasa', name: 'Moi', country: 'Kenya' },
+  // Tanzania
+  { iataCode: 'DAR', city: 'Dar es Salaam', name: 'Julius Nyerere', country: 'Tanzania' },
+  { iataCode: 'ZNZ', city: 'Zanzibar', name: 'Abeid Amani Karume', country: 'Tanzania' },
+  // Ethiopia
+  { iataCode: 'ADD', city: 'Addis Ababa', name: 'Bole', country: 'Etiopia' },
+  // Nigeria
+  { iataCode: 'LOS', city: 'Lagos', name: 'Murtala Muhammed', country: 'Nigeria' },
+  { iataCode: 'ABV', city: 'Abuja', name: 'Nnamdi Azikiwe', country: 'Nigeria' },
+  // Ghana
+  { iataCode: 'ACC', city: 'Accra', name: 'Kotoka', country: 'Ghana' },
+  // Senegal
+  { iataCode: 'DSS', city: 'Dakar', name: 'Blaise Diagne', country: 'Senegal' },
+  // Ivory Coast
+  { iataCode: 'ABJ', city: 'Abidjan', name: 'Félix Houphouët-Boigny', country: 'Coasta de Fildeș' },
+  // Tunisia
+  { iataCode: 'TUN', city: 'Tunis', name: 'Carthage', country: 'Tunisia' },
+  { iataCode: 'DJE', city: 'Djerba', name: 'Zarzis', country: 'Tunisia' },
+  // Algeria
+  { iataCode: 'ALG', city: 'Alger', name: 'Houari Boumediene', country: 'Algeria' },
+  // Libya
+  { iataCode: 'TIP', city: 'Tripoli', name: 'Mitiga', country: 'Libia' },
+  // Mozambique
+  { iataCode: 'MPM', city: 'Maputo', name: 'Maputo', country: 'Mozambic' },
+  // Madagascar
+  { iataCode: 'TNR', city: 'Antananarivo', name: 'Ivato', country: 'Madagascar' },
+  // Mauritius
+  { iataCode: 'MRU', city: 'Mauritius', name: 'Sir Seewoosagur Ramgoolam', country: 'Mauritius' },
+  // Reunion
+  { iataCode: 'RUN', city: 'Saint-Denis', name: 'Roland Garros', country: 'Réunion' },
+  // Maldives
+  { iataCode: 'MLE', city: 'Malé', name: 'Velana', country: 'Maldive' },
+  // Seychelles
+  { iataCode: 'SEZ', city: 'Mahé', name: 'Seychelles', country: 'Seychelles' },
+  // Rwanda
+  { iataCode: 'KGL', city: 'Kigali', name: 'Kigali', country: 'Rwanda' },
+  // Uganda
+  { iataCode: 'EBB', city: 'Kampala', name: 'Entebbe', country: 'Uganda' },
 ]
 
 function normalize(s: string) {
