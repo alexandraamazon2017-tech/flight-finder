@@ -56,12 +56,12 @@ export default function Home() {
     if (!origin.code) { setOriginSuggestions([]); return }
     setOriginSuggestionsLoading(true)
     setOriginSuggestions([])
-    fetch(`/api/flights/destinations?origin=${origin.code}`)
+    fetch(`/api/flights/destinations?origin=${origin.code}&month=${month}`)
       .then(r => r.json())
       .then(d => setOriginSuggestions(d.destinations || []))
       .catch(() => setOriginSuggestions([]))
       .finally(() => setOriginSuggestionsLoading(false))
-  }, [origin.code])
+  }, [origin.code, month])
 
   // Flight chain state
   const [chain, setChain] = useState<SavedFlight[]>([])

@@ -27,9 +27,9 @@ async function getRyanairRoutes(origin: string) {
   } catch { return [] }
 }
 
-async function getTravelpayoutsRoutes(origin: string) {
+async function getTravelpayoutsRoutes(origin: string, month?: string) {
   try {
-    const url = `https://api.travelpayouts.com/v1/prices/cheap?origin=${origin}&currency=EUR&token=${TOKEN}`
+    const url = `https://api.travelpayouts.com/v1/prices/cheap?origin=${origin}${month ? `&depart_date=${month}` : ''}&currency=EUR&token=${TOKEN}`
     const res = await fetch(url)
     if (!res.ok) return []
     const data = await res.json()
@@ -46,11 +46,12 @@ async function getTravelpayoutsRoutes(origin: string) {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const origin = searchParams.get('origin')
+  const month = searchParams.get('month') || undefined
   if (!origin) return NextResponse.json({ destinations: [] })
 
   const [ryanair, tp] = await Promise.allSettled([
     getRyanairRoutes(origin),
-    getTravelpayoutsRoutes(origin),
+    getTravelpayoutsRoutes(origin, month),
   ])
 
   const ryRoutes = ryanair.status === 'fulfilled' ? ryanair.value : []
