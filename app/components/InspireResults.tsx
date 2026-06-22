@@ -16,6 +16,7 @@ interface Destination {
 interface Props {
   data: Destination[]
   onSelect?: (dest: Destination) => void
+  onAddToChain?: (dest: Destination) => void
 }
 
 const FLAG_MAP: Record<string, string> = {
@@ -33,7 +34,7 @@ function getFlag(iata: string) {
 
 const PAGE_SIZE = 12
 
-export default function InspireResults({ data, onSelect }: Props) {
+export default function InspireResults({ data, onSelect, onAddToChain }: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE)
 
   if (!data.length) return null
@@ -70,17 +71,27 @@ export default function InspireResults({ data, onSelect }: Props) {
                 {Math.round(dest.price)}€
               </div>
               <div className="text-slate-400 text-xs">dus simplu</div>
-              {dest.link && (
-                <a
-                  href={dest.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={e => e.stopPropagation()}
-                  className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition"
-                >
-                  Rezervă →
-                </a>
-              )}
+              <div className="flex flex-col gap-1.5 items-end">
+                {dest.link && (
+                  <a
+                    href={dest.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition"
+                  >
+                    Rezervă →
+                  </a>
+                )}
+                {onAddToChain && (
+                  <button
+                    onClick={e => { e.stopPropagation(); onAddToChain(dest) }}
+                    className="text-xs bg-slate-700 hover:bg-green-700 border border-slate-600 hover:border-green-500 text-slate-300 hover:text-white px-3 py-1 rounded-lg transition"
+                  >
+                    + Itinerariu
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

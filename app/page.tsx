@@ -489,6 +489,25 @@ export default function Home() {
                         <InspireResults
                           data={inspireData}
                           onSelect={dest => { if (dest.link) window.open(dest.link, '_blank') }}
+                          onAddToChain={dest => {
+                            const destLabel = AIRPORT_CITY_MAP[dest.destination]
+                              ? `${AIRPORT_CITY_MAP[dest.destination]} (${dest.destination})`
+                              : dest.destinationCity || dest.destination
+                            const flight: import('./components/FlightChain').SavedFlight = {
+                              id: `${origin.code}-${dest.destination}-${dest.date}-${Date.now()}`,
+                              origin: origin.code,
+                              originLabel: origin.label,
+                              destination: dest.destination,
+                              destinationLabel: destLabel,
+                              date: dest.date,
+                              price: dest.price,
+                              source: dest.source,
+                              stops: 0,
+                              link: dest.link,
+                            }
+                            setChain(prev => [...prev, flight])
+                            setSelectedChainId(flight.id)
+                          }}
                         />
                       </>
                     )}
