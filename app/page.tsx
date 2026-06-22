@@ -7,7 +7,6 @@ import InspireResults from './components/InspireResults'
 import FlightChain, { SavedFlight } from './components/FlightChain'
 import NextDestinations from './components/NextDestinations'
 import MultihopResults from './components/MultihopResults'
-import ItineraryMap from './components/ItineraryMap'
 import { AIRPORTS } from './data/airports'
 
 const AIRPORT_LABEL_MAP = Object.fromEntries(AIRPORTS.map(a => [a.iataCode, `${a.city} (${a.iataCode})`]))
@@ -533,7 +532,6 @@ export default function Home() {
               onContinueFrom={handleContinueFrom}
               selectedId={selectedChainId}
             />
-            <ItineraryMap flights={chain} />
           </div>
         </div>
       </div>
