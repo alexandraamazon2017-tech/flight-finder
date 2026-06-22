@@ -126,6 +126,12 @@ export const AIRPORTS: Airport[] = [
   // Morocco
   { iataCode: 'CMN', city: 'Casablanca', name: 'Mohammed V', country: 'Maroc' },
   { iataCode: 'RAK', city: 'Marrakech', name: 'Menara', country: 'Maroc' },
+  { iataCode: 'TNG', city: 'Tanger', name: 'Ibn Battouta', country: 'Maroc' },
+  { iataCode: 'AGA', city: 'Agadir', name: 'Al Massira', country: 'Maroc' },
+  // Cape Verde
+  { iataCode: 'RAI', city: 'Praia', name: 'Nelson Mandela', country: 'Capul Verde', aliases: ['cape verde', 'cabo verde', 'praia'] },
+  { iataCode: 'SID', city: 'Sal', name: 'Amílcar Cabral', country: 'Capul Verde', aliases: ['cape verde', 'cabo verde', 'sal', 'santa maria'] },
+  { iataCode: 'VXE', city: 'São Vicente', name: 'Cesária Évora', country: 'Capul Verde', aliases: ['cape verde', 'cabo verde', 'mindelo'] },
   // Egypt
   { iataCode: 'HRG', city: 'Hurghada', name: 'Hurghada', country: 'Egipt' },
   { iataCode: 'SSH', city: 'Sharm el-Sheikh', name: 'Sharm el-Sheikh', country: 'Egipt' },
