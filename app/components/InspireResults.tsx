@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 interface Destination {
   destination: string
   destinationName: string
@@ -29,12 +31,19 @@ function getFlag(iata: string) {
   return FLAG_MAP[prefix] || '✈️'
 }
 
+const PAGE_SIZE = 12
+
 export default function InspireResults({ data, onSelect }: Props) {
+  const [visible, setVisible] = useState(PAGE_SIZE)
+
   if (!data.length) return null
 
+  const shown = data.slice(0, visible)
+
   return (
+    <>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {data.map((dest, i) => (
+      {shown.map((dest, i) => (
         <div
           key={dest.destination + dest.date}
           onClick={() => onSelect?.(dest)}
@@ -77,5 +86,16 @@ export default function InspireResults({ data, onSelect }: Props) {
         </div>
       ))}
     </div>
+    {visible < data.length && (
+      <div className="text-center mt-6">
+        <button
+          onClick={() => setVisible(v => v + PAGE_SIZE)}
+          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-500 text-slate-300 hover:text-white rounded-xl text-sm font-semibold transition"
+        >
+          Arată mai multe ({data.length - visible} rămase)
+        </button>
+      </div>
+    )}
+    </>
   )
 }

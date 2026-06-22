@@ -37,6 +37,8 @@ export default function Home() {
     return d.toISOString().slice(0, 7)
   })
   const [maxPrice, setMaxPrice] = useState('')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [outboundFares, setOutboundFares] = useState<Fare[]>([])
@@ -108,7 +110,19 @@ export default function Home() {
         if (data.error) { setError(data.error); return }
         setMultihopResult({ direct: data.direct, combos: data.combos || [] })
       } else {
-        const params = new URLSearchParams({ origin: o.code, month })
+        const params = new URLSearchParams({ origin: o.code })
+        if (dateFrom && dateTo) {
+          params.set('dateFrom', dateFrom)
+          params.set('dateTo', dateTo)
+        } else if (dateFrom) {
+          // only from date — use that day + 30 days
+          const to = new Date(dateFrom)
+          to.setDate(to.getDate() + 30)
+          params.set('dateFrom', dateFrom)
+          params.set('dateTo', to.toISOString().slice(0, 10))
+        } else {
+          params.set('month', month)
+        }
         if (maxPrice) params.set('maxPrice', maxPrice)
         const res = await fetch(`/api/flights/inspire?${params}`)
         const data = await res.json()
@@ -239,7 +253,7 @@ export default function Home() {
                 </div>
               )}
 
-              <div className={`grid gap-4 ${mode === 'calendar' || mode === 'multihop' ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
+              <div className={`grid gap-4 ${mode === 'inspire' ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-4'}`}>
                 <AirportSearch
                   label="De la"
                   value={origin.label}
@@ -254,18 +268,43 @@ export default function Home() {
                     placeholder="Londra, Bali, New York..."
                   />
                 )}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Luna</label>
-                  <select
-                    value={month}
-                    onChange={e => setMonth(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
-                  >
-                    {months.map(m => (
-                      <option key={m.value} value={m.value}>{m.label}</option>
-                    ))}
-                  </select>
-                </div>
+                {mode === 'inspire' ? (
+                  <>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Plecare de la</label>
+                      <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={e => setDateFrom(e.target.value)}
+                        min={new Date().toISOString().slice(0, 10)}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition [color-scheme:dark]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Plecare până la</label>
+                      <input
+                        type="date"
+                        value={dateTo}
+                        onChange={e => setDateTo(e.target.value)}
+                        min={dateFrom || new Date().toISOString().slice(0, 10)}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition [color-scheme:dark]"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Luna</label>
+                    <select
+                      value={month}
+                      onChange={e => setMonth(e.target.value)}
+                      className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
+                    >
+                      {months.map(m => (
+                        <option key={m.value} value={m.value}>{m.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 {mode === 'inspire' && (
                   <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Preț max (€)</label>

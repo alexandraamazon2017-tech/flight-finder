@@ -9,9 +9,9 @@ const RYANAIR_HEADERS = {
   'Referer': 'https://www.ryanair.com/',
 }
 
-async function getTravelpayoutsDestinations(origin: string, month: string) {
+async function getTravelpayoutsDestinations(origin: string, departDate: string) {
   try {
-    const url = `https://api.travelpayouts.com/v1/prices/cheap?origin=${origin}&depart_date=${month}&currency=EUR&token=${TOKEN}`
+    const url = `https://api.travelpayouts.com/v1/prices/cheap?origin=${origin}&depart_date=${departDate}&currency=EUR&token=${TOKEN}`
     const res = await fetch(url)
     if (!res.ok) return []
     const data = await res.json()
@@ -21,9 +21,13 @@ async function getTravelpayoutsDestinations(origin: string, month: string) {
       .flatMap(([dest, flights]) =>
         Object.values(flights as Record<string, any>).map((f: any) => ({
           destination: dest,
+          destinationCity: dest,
+          destinationName: dest,
           price: f.price,
+          currency: 'EUR',
           date: f.departure_at?.split('T')[0] || '',
           stops: f.transfers ?? 0,
+          airline: f.airline || '',
           source: 'Travelpayouts',
           link: `https://aviasales.com/search/${origin}${f.departure_at?.slice(8, 10)}${f.departure_at?.slice(5, 7)}${dest}1?marker=${MARKER}&with_request=true`,
         }))
@@ -31,13 +35,8 @@ async function getTravelpayoutsDestinations(origin: string, month: string) {
   } catch { return [] }
 }
 
-async function getRyanairDestinations(origin: string, month: string) {
+async function getRyanairDestinations(origin: string, dateFrom: string, dateTo: string) {
   try {
-    const [year, mon] = month.split('-')
-    const dateFrom = `${month}-01`
-    const lastDay = new Date(parseInt(year), parseInt(mon), 0).getDate()
-    const dateTo = `${month}-${String(lastDay).padStart(2, '0')}`
-
     const params = new URLSearchParams({
       departureAirportIataCode: origin,
       outboundDepartureDateFrom: dateFrom,
@@ -51,7 +50,6 @@ async function getRyanairDestinations(origin: string, month: string) {
     if (!res.ok) return []
     const data = await res.json()
 
-    // group by destination, keep cheapest
     const byDest: Record<string, any> = {}
     for (const fare of data.fares || []) {
       const dest = fare.outbound?.arrivalAirport?.iataCode
@@ -61,9 +59,13 @@ async function getRyanairDestinations(origin: string, month: string) {
       if (!byDest[dest] || price < byDest[dest].price) {
         byDest[dest] = {
           destination: dest,
+          destinationCity: dest,
+          destinationName: dest,
           price,
+          currency: 'EUR',
           date,
           stops: 0,
+          airline: 'FR',
           source: 'Ryanair',
           link: `https://www.ryanair.com/en/cheap-flights/${origin.toLowerCase()}-to-${dest.toLowerCase()}/?dateOut=${date}`,
         }
@@ -76,16 +78,35 @@ async function getRyanairDestinations(origin: string, month: string) {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const origin = searchParams.get('origin')
-  const month = searchParams.get('month')
   const maxPrice = searchParams.get('maxPrice')
 
-  if (!origin || !month) {
-    return NextResponse.json({ error: 'origin si month sunt necesare' }, { status: 400 })
+  // Accept either explicit dateFrom/dateTo or legacy month param
+  let dateFrom = searchParams.get('dateFrom')
+  let dateTo = searchParams.get('dateTo')
+  const month = searchParams.get('month')
+
+  if (!origin) {
+    return NextResponse.json({ error: 'origin este necesar' }, { status: 400 })
   }
 
+  // Derive dateFrom/dateTo from month if not provided
+  if (!dateFrom && month) {
+    const [y, m] = month.split('-')
+    dateFrom = `${month}-01`
+    const lastDay = new Date(parseInt(y), parseInt(m), 0).getDate()
+    dateTo = `${month}-${String(lastDay).padStart(2, '0')}`
+  }
+
+  if (!dateFrom || !dateTo) {
+    return NextResponse.json({ error: 'dateFrom si dateTo sunt necesare' }, { status: 400 })
+  }
+
+  // TP uses month or specific date; use month derived from dateFrom
+  const tpDate = dateFrom.slice(0, 7) // YYYY-MM
+
   const [tpResults, ryResults] = await Promise.allSettled([
-    getTravelpayoutsDestinations(origin, month),
-    getRyanairDestinations(origin, month),
+    getTravelpayoutsDestinations(origin, tpDate),
+    getRyanairDestinations(origin, dateFrom, dateTo),
   ])
 
   const all = [
@@ -93,9 +114,12 @@ export async function GET(request: NextRequest) {
     ...(ryResults.status === 'fulfilled' ? ryResults.value : []),
   ]
 
-  // per destinatie, pastreaza cel mai ieftin
+  // Per destination keep cheapest; filter by date range if specific dates given
   const byDest: Record<string, any> = {}
   for (const d of all) {
+    // Filter: if exact dates provided (not month-level), skip fares outside range
+    if (d.date && d.date < dateFrom) continue
+    if (d.date && d.date > dateTo) continue
     if (!byDest[d.destination] || d.price < byDest[d.destination].price) {
       byDest[d.destination] = d
     }
@@ -104,7 +128,6 @@ export async function GET(request: NextRequest) {
   const destinations = Object.values(byDest)
     .filter(d => !maxPrice || d.price <= parseInt(maxPrice))
     .sort((a, b) => a.price - b.price)
-    .slice(0, 24)
 
-  return NextResponse.json({ destinations })
+  return NextResponse.json({ destinations, total: destinations.length })
 }
