@@ -24,6 +24,11 @@ export default function AirportSearch({ label, value, onChange, placeholder }: P
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
+  // Sync internal query when parent sets value externally (e.g. clicking a suggestion chip)
+  useEffect(() => {
+    setQuery(value)
+  }, [value])
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)

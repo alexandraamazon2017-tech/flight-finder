@@ -314,11 +314,19 @@ export default function Home() {
                   noResults ? (
                     <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6">
                       <p className="text-slate-300 font-semibold mb-1">
-                        Nu s-au găsit zboruri pentru {origin.label} → {destination.label} în luna selectată.
+                        Nu s-au găsit prețuri pentru {origin.label} → {destination.label} în {months.find(m => m.value === month)?.label}.
                       </p>
                       <p className="text-slate-500 text-sm mb-4">
-                        Încearcă o altă lună sau verifică dacă ruta există.
+                        Ruta poate exista — încearcă o lună diferită sau caută direct pe aviasales.com.
                       </p>
+                      <a
+                        href={`https://aviasales.com/search/${origin.code}0101${destination.code}1?marker=${process.env.NEXT_PUBLIC_TP_MARKER || '542278'}&with_request=true`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition mb-4"
+                      >
+                        Caută pe aviasales.com →
+                      </a>
                       {availableRoutes.length > 0 && (
                         <>
                           <p className="text-slate-500 text-sm mb-3">Destinații disponibile din {origin.label}:</p>
