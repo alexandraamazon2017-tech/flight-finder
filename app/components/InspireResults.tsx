@@ -8,10 +8,12 @@ interface Destination {
   currency: string
   date: string
   source: string
+  link?: string
 }
 
 interface Props {
   data: Destination[]
+  onSelect?: (dest: Destination) => void
 }
 
 const FLAG_MAP: Record<string, string> = {
@@ -23,12 +25,11 @@ const FLAG_MAP: Record<string, string> = {
 }
 
 function getFlag(iata: string) {
-  // IATA starts with country prefix for most EU airports
   const prefix = iata.slice(0, 2)
   return FLAG_MAP[prefix] || '✈️'
 }
 
-export default function InspireResults({ data }: Props) {
+export default function InspireResults({ data, onSelect }: Props) {
   if (!data.length) return null
 
   return (
@@ -36,6 +37,7 @@ export default function InspireResults({ data }: Props) {
       {data.map((dest, i) => (
         <div
           key={dest.destination + dest.date}
+          onClick={() => onSelect?.(dest)}
           className={`rounded-2xl p-5 border transition-all hover:scale-[1.02] cursor-pointer ${
             i === 0
               ? 'bg-gradient-to-br from-blue-600 to-indigo-700 border-blue-500 shadow-lg shadow-blue-900/40'
@@ -54,11 +56,22 @@ export default function InspireResults({ data }: Props) {
               <div className="text-slate-400 text-xs mt-0.5">{dest.destination} · {dest.date}</div>
               <div className="text-slate-500 text-xs mt-0.5">{dest.source}</div>
             </div>
-            <div className="text-right">
+            <div className="text-right flex flex-col items-end gap-2">
               <div className={`text-3xl font-black ${i === 0 ? 'text-white' : 'text-green-400'}`}>
                 {Math.round(dest.price)}€
               </div>
               <div className="text-slate-400 text-xs">dus simplu</div>
+              {dest.link && (
+                <a
+                  href={dest.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition"
+                >
+                  Rezervă →
+                </a>
+              )}
             </div>
           </div>
         </div>

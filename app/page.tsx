@@ -18,6 +18,7 @@ interface Destination {
   currency: string
   date: string
   source: string
+  link?: string
 }
 
 export default function Home() {
@@ -100,6 +101,24 @@ export default function Home() {
       originLabel: origin.label,
       destination: destination.code,
       destinationLabel: destination.label,
+      date: fare.date,
+      price: fare.price,
+      source: fare.source,
+      stops: fare.stops,
+      link: fare.link,
+    }
+    setChain(prev => [...prev, flight])
+    setSelectedChainId(flight.id)
+  }, [origin, destination])
+
+  const handleSelectReturnFare = useCallback((fare: Fare) => {
+    setSelectedDate(fare.date)
+    const flight: SavedFlight = {
+      id: `${destination.code}-${origin.code}-${fare.date}-${Date.now()}`,
+      origin: destination.code,
+      originLabel: destination.label,
+      destination: origin.code,
+      destinationLabel: origin.label,
       date: fare.date,
       price: fare.price,
       source: fare.source,
@@ -310,8 +329,8 @@ export default function Home() {
                               Cel mai ieftin: <span className="text-green-400 font-bold">{Math.round(Math.min(...returnFares.map(d => d.price)))}€</span>
                             </span>
                           </div>
-                          <PriceCalendar data={returnFares} month={month} currency="EUR" />
-                          <TopFares fares={returnFares} onSelect={() => {}} selectedDate={undefined} />
+                          <PriceCalendar data={returnFares} month={month} currency="EUR" onSelectFare={handleSelectReturnFare} selectedDate={selectedDate} />
+                          <TopFares fares={returnFares} onSelect={handleSelectReturnFare} selectedDate={selectedDate} />
                         </div>
                       )}
                     </>
@@ -323,7 +342,10 @@ export default function Home() {
                     ) : (
                       <>
                         <h2 className="text-white font-bold text-lg mb-6">Destinații ieftine din {origin.label}</h2>
-                        <InspireResults data={inspireData} />
+                        <InspireResults
+                          data={inspireData}
+                          onSelect={dest => { if (dest.link) window.open(dest.link, '_blank') }}
+                        />
                       </>
                     )}
                   </div>

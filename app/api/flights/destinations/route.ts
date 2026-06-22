@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { AIRPORTS } from '../../../data/airports'
+
+const AIRPORT_MAP = Object.fromEntries(AIRPORTS.map(a => [a.iataCode, a]))
 
 const TOKEN = process.env.TRAVELPAYOUTS_API_KEY
 
@@ -69,6 +72,15 @@ export async function GET(request: NextRequest) {
   }
 
   const destinations = Object.values(byCode)
+    .map((d: any) => {
+      const info = AIRPORT_MAP[d.code]
+      return {
+        ...d,
+        city: info?.city || d.city || d.code,
+        country: info?.country || d.country || '',
+        airportName: info?.name || '',
+      }
+    })
     .sort((a, b) => (a.price ?? 999) - (b.price ?? 999))
 
   return NextResponse.json({ destinations })
