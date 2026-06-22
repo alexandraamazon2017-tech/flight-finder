@@ -190,6 +190,25 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
+  const handleReset = () => {
+    setOrigin({ code: '', label: '' })
+    setDestination({ code: '', label: '' })
+    setOutboundFares([])
+    setReturnFares([])
+    setInspireData([])
+    setMultihopResult(null)
+    setSearched(false)
+    setSelectedDate(undefined)
+    setError('')
+    setChain([])
+    setSelectedChainId(null)
+    setNextDestinations([])
+    setOriginSuggestions([])
+    setDateFrom('')
+    setDateTo('')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const months = Array.from({ length: 12 }, (_, i) => {
     const d = new Date()
     d.setMonth(d.getMonth() + i)
@@ -321,13 +340,22 @@ export default function Home() {
 
               {error && <p className="text-red-400 text-sm mt-4">{error}</p>}
 
-              <button
-                onClick={() => search()}
-                disabled={loading}
-                className="mt-4 w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
-              >
-                {loading ? 'Se caută...' : mode === 'calendar' ? '🔍 Caută zile ieftine' : mode === 'multihop' ? '🔀 Caută cea mai ieftină rută' : '🌍 Găsește destinații ieftine'}
-              </button>
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => search()}
+                  disabled={loading}
+                  className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition"
+                >
+                  {loading ? 'Se caută...' : mode === 'calendar' ? '🔍 Caută zile ieftine' : mode === 'multihop' ? '🔀 Caută cea mai ieftină rută' : '🌍 Găsește destinații ieftine'}
+                </button>
+                <button
+                  onClick={handleReset}
+                  title="Resetează tot"
+                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-red-500 text-slate-400 hover:text-red-400 rounded-xl transition"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             {/* Origin suggestions — shown before search */}
