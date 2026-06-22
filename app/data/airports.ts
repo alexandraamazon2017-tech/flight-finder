@@ -114,6 +114,7 @@ export const AIRPORTS: Airport[] = [
   // Switzerland
   { iataCode: 'ZRH', city: 'Zürich', name: 'Kloten', country: 'Elveția' },
   { iataCode: 'GVA', city: 'Geneva', name: 'Cointrin', country: 'Elveția' },
+  { iataCode: 'BSL', city: 'Basel', name: 'EuroAirport Basel-Mulhouse-Freiburg', country: 'Elveția', aliases: ['basel', 'mulhouse', 'freiburg', 'euroairport'] },
   // Denmark
   { iataCode: 'CPH', city: 'Copenhaga', name: 'Kastrup', country: 'Danemarca' },
   // Sweden
