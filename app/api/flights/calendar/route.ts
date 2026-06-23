@@ -85,21 +85,39 @@ async function getFaresForRoute(origin: string, destination: string, month: stri
   return Object.values(byDate).sort((a: any, b: any) => a.date.localeCompare(b.date))
 }
 
+async function getFaresForMultiOrigin(origins: string[], destination: string, month: string) {
+  const allFares = await Promise.all(
+    origins.map(o => getFaresForRoute(o, destination, month))
+  )
+  const byDate: Record<string, any> = {}
+  for (const fares of allFares) {
+    for (const f of fares) {
+      if (!byDate[f.date] || f.price < byDate[f.date].price) {
+        byDate[f.date] = f
+      }
+    }
+  }
+  return Object.values(byDate).sort((a: any, b: any) => a.date.localeCompare(b.date))
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const origin = searchParams.get('origin')
-  const destination = searchParams.get('destination')
+  const originParam = searchParams.get('origin')
+  const destinationParam = searchParams.get('destination')
   const month = searchParams.get('month')
   const tripType = searchParams.get('tripType') || 'oneway'
 
-  if (!origin || !destination || !month) {
+  if (!originParam || !destinationParam || !month) {
     return NextResponse.json({ error: 'origin, destination, month required' }, { status: 400 })
   }
 
+  const origins = originParam.split(',').map(s => s.trim()).filter(Boolean)
+  const destinations = destinationParam.split(',').map(s => s.trim()).filter(Boolean)
+
   try {
     const [outbound, ret] = await Promise.all([
-      getFaresForRoute(origin, destination, month),
-      tripType === 'roundtrip' ? getFaresForRoute(destination, origin, month) : Promise.resolve([]),
+      getFaresForMultiOrigin(origins, destinations[0], month),
+      tripType === 'roundtrip' ? getFaresForMultiOrigin(destinations, origins[0], month) : Promise.resolve([]),
     ])
 
     return NextResponse.json({ outbound, return: ret, count: outbound.length })

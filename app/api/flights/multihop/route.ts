@@ -131,22 +131,29 @@ function mergeLegMaps(a: Record<string, Leg>, b: Record<string, Leg>): Record<st
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const origin = searchParams.get('origin')
-  const destination = searchParams.get('destination')
+  const originParam = searchParams.get('origin')
+  const destinationParam = searchParams.get('destination')
   const month = searchParams.get('month')
 
-  if (!origin || !destination || !month) {
+  if (!originParam || !destinationParam || !month) {
     return NextResponse.json({ error: 'origin, destination, month required' }, { status: 400 })
   }
 
-  // Leg 1: Ryanair + TP from origin
-  const [ryLeg1, tpLeg1] = await Promise.all([
-    getRyanairFromOrigin(origin, month),
-    getTpFromOrigin(origin, month),
-  ])
-  const leg1Map = mergeLegMaps(tpLeg1, ryLeg1)
+  const origins = originParam.split(',').map(s => s.trim()).filter(Boolean)
+  const dests = destinationParam.split(',').map(s => s.trim()).filter(Boolean)
+  const origin = origins[0]
+  const destination = dests[0]
 
-  const directFare = leg1Map[destination] ?? null
+  // Leg 1: Ryanair + TP from all origin airports, merged
+  const leg1Fetches = await Promise.all(
+    origins.flatMap(o => [getRyanairFromOrigin(o, month), getTpFromOrigin(o, month)])
+  )
+  let leg1Map: Record<string, Leg> = {}
+  for (const m of leg1Fetches) leg1Map = mergeLegMaps(leg1Map, m)
+
+  // Exclude legs that land at an origin airport
+  const originSet = new Set(origins)
+  const directFare = dests.map(d => leg1Map[d]).filter(Boolean).sort((a, b) => a.price - b.price)[0] ?? null
 
   const MAJOR_HUBS = [
     'LHR','LGW','STN','CDG','ORY','AMS','FRA','MUC','BER','ZRH','VIE','BSL',
@@ -160,22 +167,20 @@ export async function GET(request: NextRequest) {
   ]
 
   const leg1Hubs = Object.entries(leg1Map)
-    .filter(([dest]) => dest !== destination)
+    .filter(([dest]) => !dests.includes(dest) && !originSet.has(dest))
     .map(([dest, fare]) => ({ dest, ...fare }))
 
   const leg1Codes = new Set(leg1Hubs.map(h => h.dest))
   const extraHubs = MAJOR_HUBS
-    .filter(h => h !== origin && h !== destination && !leg1Codes.has(h))
+    .filter(h => !originSet.has(h) && !dests.includes(h) && !leg1Codes.has(h))
     .map(h => ({ dest: h, price: Infinity, date: '', time: undefined as string | undefined, airline: '', transfers: 0, source: '', link: '' }))
 
   const hubs = [...leg1Hubs, ...extraHubs]
 
-  // Leg 2: search with minDate = leg1Date + 1 day (chronological constraint)
   const leg2Results = await Promise.all(
     hubs.map(async hub => {
       if (hub.price === Infinity || !hub.date) return null
 
-      // Minimum departure for leg2: day after leg1 lands
       const minLeg2Date = addDays(hub.date, 1)
 
       const [ryLeg2, tpLeg2] = await Promise.all([

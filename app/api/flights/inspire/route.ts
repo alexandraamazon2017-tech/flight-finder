@@ -80,19 +80,19 @@ async function getRyanairDestinations(origin: string, dateFrom: string, dateTo: 
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const origin = searchParams.get('origin')
+  const originParam = searchParams.get('origin')
   const maxPrice = searchParams.get('maxPrice')
 
-  // Accept either explicit dateFrom/dateTo or legacy month param
   let dateFrom = searchParams.get('dateFrom')
   let dateTo = searchParams.get('dateTo')
   const month = searchParams.get('month')
 
-  if (!origin) {
+  if (!originParam) {
     return NextResponse.json({ error: 'origin este necesar' }, { status: 400 })
   }
 
-  // Derive dateFrom/dateTo from month if not provided
+  const origins = originParam.split(',').map(s => s.trim()).filter(Boolean)
+
   if (!dateFrom && month) {
     const [y, m] = month.split('-')
     dateFrom = `${month}-01`
@@ -104,25 +104,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'dateFrom si dateTo sunt necesare' }, { status: 400 })
   }
 
-  // TP uses month or specific date; use month derived from dateFrom
-  const tpDate = dateFrom.slice(0, 7) // YYYY-MM
+  const tpDate = dateFrom.slice(0, 7)
 
-  const [tpResults, ryResults] = await Promise.allSettled([
-    getTravelpayoutsDestinations(origin, tpDate),
-    getRyanairDestinations(origin, dateFrom, dateTo),
-  ])
+  const allSettled = await Promise.allSettled(
+    origins.flatMap(origin => [
+      getTravelpayoutsDestinations(origin, tpDate),
+      getRyanairDestinations(origin, dateFrom!, dateTo!),
+    ])
+  )
 
-  const all = [
-    ...(tpResults.status === 'fulfilled' ? tpResults.value : []),
-    ...(ryResults.status === 'fulfilled' ? ryResults.value : []),
-  ]
+  const all = allSettled.flatMap(r => r.status === 'fulfilled' ? r.value : [])
 
-  // Per destination keep cheapest; filter by date range if specific dates given
   const byDest: Record<string, any> = {}
   for (const d of all) {
-    // Filter: if exact dates provided (not month-level), skip fares outside range
     if (d.date && d.date < dateFrom) continue
-    if (d.date && d.date > dateTo) continue
+    if (d.date && d.date > dateTo!) continue
+    if (origins.includes(d.destination)) continue
     if (!byDest[d.destination] || d.price < byDest[d.destination].price) {
       byDest[d.destination] = d
     }
