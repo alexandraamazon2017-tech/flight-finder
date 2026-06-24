@@ -61,5 +61,13 @@ export const RYANAIR_ROUTES: Record<string, Route[]> = {
 }
 
 export function getRoutes(origin: string): Route[] {
-  return RYANAIR_ROUTES[origin] || []
+  const codes = origin.split(',').map(s => s.trim())
+  const seen = new Set<string>()
+  const result: Route[] = []
+  for (const code of codes) {
+    for (const r of RYANAIR_ROUTES[code] || []) {
+      if (!seen.has(r.code)) { seen.add(r.code); result.push(r) }
+    }
+  }
+  return result
 }
