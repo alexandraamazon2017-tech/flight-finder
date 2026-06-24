@@ -49,6 +49,8 @@ export default function Home() {
   const [nextDestinations, setNextDestinations] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [nextDestLoading, setNextDestLoading] = useState(false)
   const [multihopResult, setMultihopResult] = useState<{ direct: any; combos: any[] } | null>(null)
+  const [outboundMonth, setOutboundMonth] = useState(month)
+  const [returnMonth, setReturnMonth] = useState(month)
   const [originSuggestions, setOriginSuggestions] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [originSuggestionsLoading, setOriginSuggestionsLoading] = useState(false)
 
@@ -79,6 +81,8 @@ export default function Home() {
     setLoading(true)
     setSearched(false)
     setSelectedDate(undefined)
+    setOutboundMonth(month)
+    setReturnMonth(month)
 
     try {
       if (mode === 'calendar') {
@@ -207,6 +211,22 @@ export default function Home() {
     setDateFrom('')
     setDateTo('')
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleOutboundMonthChange = async (newMonth: string) => {
+    setOutboundMonth(newMonth)
+    const params = new URLSearchParams({ origin: origin.code, destination: destination.code, month: newMonth, tripType: 'oneway' })
+    const res = await fetch(`/api/flights/calendar?${params}`)
+    const data = await res.json()
+    if (!data.error) setOutboundFares(data.outbound || [])
+  }
+
+  const handleReturnMonthChange = async (newMonth: string) => {
+    setReturnMonth(newMonth)
+    const params = new URLSearchParams({ origin: destination.code, destination: origin.code, month: newMonth, tripType: 'oneway' })
+    const res = await fetch(`/api/flights/calendar?${params}`)
+    const data = await res.json()
+    if (!data.error) setReturnFares(data.outbound || [])
   }
 
   const months = Array.from({ length: 12 }, (_, i) => {
@@ -425,10 +445,12 @@ export default function Home() {
                         </div>
                         <PriceCalendar
                           data={outboundFares}
-                          month={month}
+                          month={outboundMonth}
                           currency="EUR"
                           onSelectFare={handleSelectFare}
                           selectedDate={selectedDate}
+                          onMonthChange={handleOutboundMonthChange}
+                          minMonth={month}
                         />
                         <TopFares fares={outboundFares} onSelect={handleSelectFare} selectedDate={selectedDate} />
                         {selectedDate && (
@@ -465,7 +487,15 @@ export default function Home() {
                               Cel mai ieftin: <span className="text-green-400 font-bold">{Math.round(Math.min(...returnFares.map(d => d.price)))}€</span>
                             </span>
                           </div>
-                          <PriceCalendar data={returnFares} month={month} currency="EUR" onSelectFare={handleSelectReturnFare} selectedDate={selectedDate} />
+                          <PriceCalendar
+                            data={returnFares}
+                            month={returnMonth}
+                            currency="EUR"
+                            onSelectFare={handleSelectReturnFare}
+                            selectedDate={selectedDate}
+                            onMonthChange={handleReturnMonthChange}
+                            minMonth={month}
+                          />
                           <TopFares fares={returnFares} onSelect={handleSelectReturnFare} selectedDate={selectedDate} />
                         </div>
                       )}

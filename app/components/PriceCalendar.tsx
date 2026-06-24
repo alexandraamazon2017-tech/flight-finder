@@ -19,6 +19,8 @@ interface Props {
   currency: string
   onSelectFare?: (fare: Fare) => void
   selectedDate?: string
+  onMonthChange?: (month: string) => void
+  minMonth?: string
 }
 
 function getPriceColor(price: number, min: number, max: number, selected: boolean) {
@@ -40,7 +42,13 @@ function getBaseBg(price: number, min: number, max: number) {
   return 'bg-red-500'
 }
 
-export default function PriceCalendar({ data, month, currency, onSelectFare, selectedDate }: Props) {
+function addMonths(month: string, delta: number): string {
+  const [y, m] = month.split('-').map(Number)
+  const d = new Date(y, m - 1 + delta, 1)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+export default function PriceCalendar({ data, month, currency, onSelectFare, selectedDate, onMonthChange, minMonth }: Props) {
   const fareMap = useMemo(() => {
     const map: Record<string, Fare> = {}
     for (const d of data) map[d.date] = d
@@ -58,11 +66,31 @@ export default function PriceCalendar({ data, month, currency, onSelectFare, sel
 
   const weekDays = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du']
 
+  const canGoPrev = !minMonth || addMonths(month, -1) >= minMonth
+  const prevMonth = addMonths(month, -1)
+  const nextMonth = addMonths(month, 1)
+
   return (
     <div>
-      <h3 className="text-center text-white font-semibold text-lg mb-4 capitalize">
-        {format(monthStart, 'MMMM yyyy', { locale: ro })}
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={() => onMonthChange?.(prevMonth)}
+          disabled={!onMonthChange || !canGoPrev}
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          ←
+        </button>
+        <h3 className="text-center text-white font-semibold text-lg capitalize">
+          {format(monthStart, 'MMMM yyyy', { locale: ro })}
+        </h3>
+        <button
+          onClick={() => onMonthChange?.(nextMonth)}
+          disabled={!onMonthChange}
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          →
+        </button>
+      </div>
       <div className="grid grid-cols-7 gap-1">
         {weekDays.map(d => (
           <div key={d} className="text-center text-slate-500 text-xs font-medium py-1">{d}</div>
