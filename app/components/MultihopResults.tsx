@@ -135,7 +135,7 @@ export default function MultihopResults({ origin, originLabel, destination, dest
             key={c.hub}
             className={`rounded-2xl p-4 border transition ${isCheapest ? 'bg-gradient-to-r from-green-900/40 to-slate-800 border-green-600' : 'bg-slate-800 border-slate-700 hover:border-slate-600'}`}
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 {isCheapest && (
                   <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold inline-block mb-2">Cel mai ieftin</span>
@@ -208,7 +208,7 @@ export default function MultihopResults({ origin, originLabel, destination, dest
               </div>
 
               {/* Total */}
-              <div className="text-right shrink-0 pt-6">
+              <div className="flex sm:flex-col sm:items-end items-center justify-between w-full sm:w-auto sm:shrink-0 sm:pt-6 gap-3">
                 <div className="text-white font-black text-2xl">{Math.round(c.total)}€</div>
                 <div className="text-slate-500 text-xs">total</div>
                 {direct && (

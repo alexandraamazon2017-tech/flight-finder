@@ -245,14 +245,14 @@ export default function Home() {
         <span className="text-slate-500 text-sm ml-1">— zboruri ieftine</span>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex gap-6 items-start">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
 
           {/* LEFT — search + results */}
           <div className="flex-1 min-w-0">
 
             {/* Mode tabs */}
-            <div className="flex gap-2 mb-6 bg-slate-800/60 p-1 rounded-xl w-fit flex-wrap">
+            <div className="flex gap-1 mb-6 bg-slate-800/60 p-1 rounded-xl flex-wrap">
               <button
                 onClick={() => { setMode('calendar'); setSearched(false) }}
                 className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${mode === 'calendar' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
@@ -274,7 +274,7 @@ export default function Home() {
             </div>
 
             {/* Search form */}
-            <div className="bg-slate-900 border border-slate-700 rounded-2xl p-5 mb-6 shadow-xl">
+            <div className="bg-slate-900 border border-slate-700 rounded-2xl p-4 sm:p-5 mb-6 shadow-xl">
               {mode === 'calendar' && (
                 <div className="flex gap-2 mb-4">
                   <button
@@ -561,7 +561,7 @@ export default function Home() {
           </div>
 
           {/* RIGHT — flight chain + map */}
-          <div className="w-72 shrink-0">
+          <div className="w-full lg:w-72 lg:shrink-0">
             <FlightChain
               flights={chain}
               onRemove={handleRemoveFlight}
