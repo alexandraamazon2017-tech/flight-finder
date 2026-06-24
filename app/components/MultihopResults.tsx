@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 interface Combo {
   hub: string
   leg1Price: number
@@ -46,7 +48,37 @@ function AirlineBadge({ code, transfers }: { code: string; transfers: number }) 
   )
 }
 
+function ShareCard({ combo, origin, originLabel, destination, destinationLabel, hubNames }: {
+  combo: Combo; origin: string; originLabel: string; destination: string; destinationLabel: string; hubNames: Record<string, string>
+}) {
+  const [copied, setCopied] = useState(false)
+  const hubLabel = hubNames[combo.hub] || combo.hub
+  const text = `✈ Rută ieftină găsită pe FlightFinder!\n\n${originLabel} → ${hubLabel} (${combo.hub}) → ${destinationLabel}\n\n🛫 Zbor 1: ${origin} → ${combo.hub} | ${combo.leg1Date} | ${Math.round(combo.leg1Price)}€\n🛫 Zbor 2: ${combo.hub} → ${destination} | ${combo.leg2Date} | ${Math.round(combo.leg2Price)}€\n\n💰 Total: ${Math.round(combo.total)}€\n\n🔗 flightfinder-mu.vercel.app`
+
+  const copy = async () => {
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="mt-3 bg-slate-950 border border-slate-600 rounded-xl p-4">
+      <div className="text-slate-400 text-xs font-semibold uppercase tracking-wide mb-3">Card shareabil</div>
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-4 mb-3 font-mono text-sm whitespace-pre-wrap text-slate-200 text-xs leading-relaxed">
+        {text}
+      </div>
+      <button
+        onClick={copy}
+        className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition"
+      >
+        {copied ? '✓ Copiat!' : '📋 Copiază pentru WhatsApp / Facebook'}
+      </button>
+    </div>
+  )
+}
+
 export default function MultihopResults({ origin, originLabel, destination, destinationLabel, direct, combos, hubNames }: Props) {
+  const [shareIdx, setShareIdx] = useState<number | null>(null)
   const cheapestCombo = combos[0]?.total ?? Infinity
   const cheapestTotal = direct ? Math.min(direct.price, cheapestCombo) : cheapestCombo
 
@@ -184,8 +216,24 @@ export default function MultihopResults({ origin, originLabel, destination, dest
                     {c.total < direct.price ? `−${Math.round(direct.price - c.total)}€` : `+${Math.round(c.total - direct.price)}€`}
                   </div>
                 )}
+                <button
+                  onClick={() => setShareIdx(shareIdx === i ? null : i)}
+                  className="mt-2 text-xs text-slate-500 hover:text-blue-400 transition"
+                >
+                  {shareIdx === i ? 'Închide' : '📤 Share'}
+                </button>
               </div>
             </div>
+            {shareIdx === i && (
+              <ShareCard
+                combo={c}
+                origin={origin}
+                originLabel={originLabel}
+                destination={destination}
+                destinationLabel={destinationLabel}
+                hubNames={hubNames}
+              />
+            )}
           </div>
         )
       })}

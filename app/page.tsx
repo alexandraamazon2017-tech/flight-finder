@@ -431,6 +431,12 @@ export default function Home() {
                           selectedDate={selectedDate}
                         />
                         <TopFares fares={outboundFares} onSelect={handleSelectFare} selectedDate={selectedDate} />
+                        {selectedDate && (
+                          <BookingCTA
+                            city={destination.label.split(' (')[0]}
+                            date={selectedDate}
+                          />
+                        )}
                         <NextDestinations
                           from={destination.code}
                           fromLabel={destination.label}
@@ -539,12 +545,48 @@ export default function Home() {
   )
 }
 
+function BookingCTA({ city, date }: { city: string; date: string }) {
+  const aid = process.env.NEXT_PUBLIC_BOOKING_AID || '2311236'
+  const checkout = new Date(date)
+  checkout.setDate(checkout.getDate() + 7)
+  const checkoutStr = checkout.toISOString().slice(0, 10)
+  const url = `https://www.booking.com/searchresults.html?aid=${aid}&ss=${encodeURIComponent(city)}&checkin=${date}&checkout=${checkoutStr}&lang=ro`
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-4 flex items-center justify-between gap-3 bg-blue-950/60 border border-blue-800/50 hover:border-blue-600 rounded-xl px-4 py-3 transition group"
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-xl">🏨</span>
+        <div>
+          <div className="text-white text-sm font-semibold">Cazare în {city}</div>
+          <div className="text-slate-400 text-xs">Check-in {date} · Compară prețurile pe Booking.com</div>
+        </div>
+      </div>
+      <span className="text-blue-400 text-sm group-hover:text-blue-300 shrink-0">Vezi →</span>
+    </a>
+  )
+}
+
+function PriceConfidenceBadge({ price, avg }: { price: number; avg: number }) {
+  const ratio = price / avg
+  if (ratio < 0.80) return <span className="text-xs bg-green-500/20 text-green-400 border border-green-500/30 px-1.5 py-0.5 rounded-full font-medium">Preț bun</span>
+  if (ratio > 1.20) return <span className="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded-full font-medium">Preț ridicat</span>
+  return null
+}
+
 function TopFares({ fares, onSelect, selectedDate }: { fares: Fare[]; onSelect: (f: Fare) => void; selectedDate?: string }) {
+  const avg = fares.length ? fares.reduce((s, f) => s + f.price, 0) / fares.length : 0
+  const sorted = [...fares].sort((a, b) => a.price - b.price).slice(0, 5)
+
   return (
     <div className="mt-6">
       <h3 className="text-slate-400 font-semibold text-xs uppercase tracking-wider mb-3">Top 5 cele mai ieftine zile</h3>
       <div className="space-y-2">
-        {[...fares].sort((a, b) => a.price - b.price).slice(0, 5).map((d, i) => (
+        {sorted.map((d, i) => (
           <div
             key={d.date}
             onClick={() => onSelect(d)}
@@ -554,10 +596,11 @@ function TopFares({ fares, onSelect, selectedDate }: { fares: Fare[]; onSelect: 
                 : 'bg-slate-800 hover:bg-slate-700 border border-transparent'
             }`}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="text-slate-600 text-sm font-mono w-4">{i + 1}</span>
               <span className="text-white">{d.date}</span>
               <span className="text-slate-500 text-xs">{d.source}</span>
+              <PriceConfidenceBadge price={d.price} avg={avg} />
             </div>
             <div className="flex items-center gap-2">
               <span className={`font-bold ${i === 0 ? 'text-green-400 text-lg' : 'text-slate-300'}`}>
