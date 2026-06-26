@@ -21,6 +21,7 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'TGM', city: 'Târgu Mureș', name: 'Târgu Mureș', country: 'România' },
   { iataCode: 'CRA', city: 'Craiova', name: 'Craiova', country: 'România' },
   { iataCode: 'BCM', city: 'Bacău', name: 'George Enescu', country: 'România' },
+  { iataCode: 'SCV', city: 'Suceava', name: 'Ștefan cel Mare', country: 'România' },
   // UK
   { iataCode: 'LHR', city: 'Londra', name: 'Heathrow', country: 'Marea Britanie', aliases: ['london', 'londres'] },
   { iataCode: 'LGW', city: 'Londra', name: 'Gatwick', country: 'Marea Britanie', aliases: ['london', 'londres'] },
@@ -40,6 +41,7 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'TFS', city: 'Tenerife', name: 'Sur Reina Sofía', country: 'Spania' },
   { iataCode: 'LPA', city: 'Gran Canaria', name: 'Las Palmas', country: 'Spania' },
   { iataCode: 'IBZ', city: 'Ibiza', name: 'Ibiza', country: 'Spania' },
+  { iataCode: 'EAS', city: 'San Sebastián', name: 'San Sebastián', country: 'Spania', aliases: ['san sebastian', 'donostia', 'bilbao'] },
   // Italy
   { iataCode: 'FCO', city: 'Roma', name: 'Fiumicino', country: 'Italia', aliases: ['rome', 'rom'] },
   { iataCode: 'CIA', city: 'Roma', name: 'Ciampino', country: 'Italia', aliases: ['rome', 'rom'] },
@@ -48,7 +50,8 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'VCE', city: 'Veneția', name: 'Marco Polo', country: 'Italia' },
   { iataCode: 'NAP', city: 'Napoli', name: 'Capodichino', country: 'Italia' },
   { iataCode: 'BLQ', city: 'Bologna', name: 'Guglielmo Marconi', country: 'Italia' },
-  { iataCode: 'PSA', city: 'Pisa', name: 'Galileo Galilei', country: 'Italia' },
+  { iataCode: 'PSA', city: 'Pisa', name: 'Galileo Galilei', country: 'Italia', aliases: ['cinque terre', 'florenta', 'toscana'] },
+  { iataCode: 'FLR', city: 'Florența', name: 'Peretola', country: 'Italia', aliases: ['florence', 'florenta', 'toscana'] },
   { iataCode: 'CTA', city: 'Catania', name: 'Fontanarossa', country: 'Italia' },
   { iataCode: 'CAG', city: 'Cagliari', name: 'Mario Mameli', country: 'Italia', aliases: ['sardinia', 'sardegna'] },
   { iataCode: 'OLB', city: 'Olbia', name: 'Costa Smeralda', country: 'Italia', aliases: ['sardinia', 'sardegna'] },
@@ -105,10 +108,14 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'LIS', city: 'Lisabona', name: 'Humberto Delgado', country: 'Portugalia' },
   { iataCode: 'OPO', city: 'Porto', name: 'Francisco Sá Carneiro', country: 'Portugalia' },
   { iataCode: 'FAO', city: 'Algarve', name: 'Faro', country: 'Portugalia' },
+  { iataCode: 'PDL', city: 'Insulele Azore', name: 'João Paulo II', country: 'Portugalia', aliases: ['azore', 'azores', 'ponta delgada'] },
+  // Iceland
+  { iataCode: 'KEF', city: 'Reykjavik', name: 'Keflavik', country: 'Islanda', aliases: ['iceland', 'islanda', 'reykjavik'] },
   // Turkey
   { iataCode: 'IST', city: 'Istanbul', name: 'Istanbul', country: 'Turcia' },
   { iataCode: 'SAW', city: 'Istanbul', name: 'Sabiha Gökçen', country: 'Turcia' },
   { iataCode: 'AYT', city: 'Antalya', name: 'Antalya', country: 'Turcia' },
+  { iataCode: 'ASR', city: 'Kayseri', name: 'Erkilet', country: 'Turcia', aliases: ['cappadocia', 'capadocia', 'cappadochia'] },
   { iataCode: 'DLM', city: 'Dalaman', name: 'Dalaman', country: 'Turcia' },
   { iataCode: 'BJV', city: 'Bodrum', name: 'Milas-Bodrum', country: 'Turcia' },
   // Austria
@@ -143,6 +150,7 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'NYO', city: 'Stockholm', name: 'Skavsta', country: 'Suedia' },
   // Norway
   { iataCode: 'OSL', city: 'Oslo', name: 'Gardermoen', country: 'Norvegia' },
+  { iataCode: 'BGO', city: 'Bergen', name: 'Flesland', country: 'Norvegia', aliases: ['bergen', 'fiorduri', 'fjords'] },
   // Cyprus
   { iataCode: 'LCA', city: 'Larnaca', name: 'Larnaca', country: 'Cipru' },
   { iataCode: 'PFO', city: 'Paphos', name: 'Paphos', country: 'Cipru' },
@@ -367,6 +375,7 @@ export const AIRPORTS: Airport[] = [
   { iataCode: 'REC', city: 'Recife', name: 'Guararapes', country: 'Brazilia' },
   { iataCode: 'MAO', city: 'Manaus', name: 'Eduardo Gomes', country: 'Brazilia' },
   // Argentina
+  { iataCode: 'SJO', city: 'San José', name: 'Juan Santamaría', country: 'Costa Rica', aliases: ['costa rica'] },
   { iataCode: 'EZE', city: 'Buenos Aires', name: 'Ezeiza', country: 'Argentina' },
   { iataCode: 'AEP', city: 'Buenos Aires', name: 'Jorge Newbery', country: 'Argentina' },
   { iataCode: 'COR', city: 'Córdoba', name: 'Ambrosio Taravella', country: 'Argentina' },
