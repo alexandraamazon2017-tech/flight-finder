@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import AirportSearch from './components/AirportSearch'
 import PriceCalendar, { Fare } from './components/PriceCalendar'
@@ -53,30 +53,19 @@ export default function Home() {
   const [outboundMonth, setOutboundMonth] = useState(month)
   const [returnMonth, setReturnMonth] = useState(month)
 
-  const searchParams = useSearchParams()
-  const didAutoSearch = useRef(false)
-
-  useEffect(() => {
-    if (didAutoSearch.current) return
-    const from = searchParams.get('from')
-    const to = searchParams.get('to')
-    const m = searchParams.get('month')
-    const mode_ = searchParams.get('mode') as Mode | null
-    if (!from) return
-    didAutoSearch.current = true
+  const handleUrlParams = useCallback((from: string, to: string | null, m: string | null, mode_: string | null) => {
     const fromLabel = AIRPORT_LABEL_MAP[from] || from
     const toLabel = to ? (AIRPORT_LABEL_MAP[to] || to) : ''
-    if (mode_) setMode(mode_)
+    if (mode_) setMode(mode_ as Mode)
     if (m) { setMonth(m); setOutboundMonth(m); setReturnMonth(m) }
     const newOrigin = { code: from, label: fromLabel }
     const newDest = to ? { code: to, label: toLabel } : { code: '', label: '' }
     setOrigin(newOrigin)
     setDestination(newDest)
-    // auto-trigger search if enough params provided
     if (to || mode_ === 'inspire') {
       setTimeout(() => search({ origin: newOrigin, destination: newDest }), 50)
     }
-  }, [searchParams])
+  }, [])
   const [originSuggestions, setOriginSuggestions] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [originSuggestionsLoading, setOriginSuggestionsLoading] = useState(false)
 
@@ -597,8 +586,24 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Suspense fallback={null}>
+        <SearchParamsReader onParams={handleUrlParams} />
+      </Suspense>
     </main>
   )
+}
+
+function SearchParamsReader({ onParams }: { onParams: (from: string, to: string | null, m: string | null, mode: string | null) => void }) {
+  const searchParams = useSearchParams()
+  const didRun = useRef(false)
+  useEffect(() => {
+    if (didRun.current) return
+    const from = searchParams.get('from')
+    if (!from) return
+    didRun.current = true
+    onParams(from, searchParams.get('to'), searchParams.get('month'), searchParams.get('mode'))
+  }, [searchParams, onParams])
+  return null
 }
 
 function BookingCTA({ city, date }: { city: string; date: string }) {
