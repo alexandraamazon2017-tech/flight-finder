@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import AirportSearch from './components/AirportSearch'
 import PriceCalendar, { Fare } from './components/PriceCalendar'
 import InspireResults from './components/InspireResults'
@@ -51,6 +52,31 @@ export default function Home() {
   const [multihopResult, setMultihopResult] = useState<{ direct: any; combos: any[] } | null>(null)
   const [outboundMonth, setOutboundMonth] = useState(month)
   const [returnMonth, setReturnMonth] = useState(month)
+
+  const searchParams = useSearchParams()
+  const didAutoSearch = useRef(false)
+
+  useEffect(() => {
+    if (didAutoSearch.current) return
+    const from = searchParams.get('from')
+    const to = searchParams.get('to')
+    const m = searchParams.get('month')
+    const mode_ = searchParams.get('mode') as Mode | null
+    if (!from) return
+    didAutoSearch.current = true
+    const fromLabel = AIRPORT_LABEL_MAP[from] || from
+    const toLabel = to ? (AIRPORT_LABEL_MAP[to] || to) : ''
+    if (mode_) setMode(mode_)
+    if (m) { setMonth(m); setOutboundMonth(m); setReturnMonth(m) }
+    const newOrigin = { code: from, label: fromLabel }
+    const newDest = to ? { code: to, label: toLabel } : { code: '', label: '' }
+    setOrigin(newOrigin)
+    setDestination(newDest)
+    // auto-trigger search if enough params provided
+    if (to || mode_ === 'inspire') {
+      setTimeout(() => search({ origin: newOrigin, destination: newDest }), 50)
+    }
+  }, [searchParams])
   const [originSuggestions, setOriginSuggestions] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [originSuggestionsLoading, setOriginSuggestionsLoading] = useState(false)
 
