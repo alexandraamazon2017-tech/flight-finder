@@ -29,7 +29,7 @@ interface Destination {
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>('calendar')
-  const [tripType, setTripType] = useState<TripType>('oneway')
+  const [tripType, setTripType] = useState<TripType>('roundtrip')
   const [origin, setOrigin] = useState({ code: '', label: '' })
   const [destination, setDestination] = useState({ code: '', label: '' })
   const [month, setMonth] = useState(() => {
@@ -53,21 +53,26 @@ export default function Home() {
   const [outboundMonth, setOutboundMonth] = useState(month)
   const [returnMonth, setReturnMonth] = useState(month)
 
+  const autoSearchPending = useRef(false)
+
   const handleUrlParams = useCallback((from: string, to: string | null, m: string | null, mode_: string | null) => {
     const fromLabel = AIRPORT_LABEL_MAP[from] || from
     const toLabel = to ? (AIRPORT_LABEL_MAP[to] || to) : ''
     if (mode_) setMode(mode_ as Mode)
     if (m) { setMonth(m); setOutboundMonth(m); setReturnMonth(m) }
-    const newOrigin = { code: from, label: fromLabel }
-    const newDest = to ? { code: to, label: toLabel } : { code: '', label: '' }
-    setOrigin(newOrigin)
-    setDestination(newDest)
-    if (to || mode_ === 'inspire') {
-      setTimeout(() => search({ origin: newOrigin, destination: newDest }), 50)
-    }
+    setOrigin({ code: from, label: fromLabel })
+    setDestination(to ? { code: to, label: toLabel } : { code: '', label: '' })
+    if (to || mode_ === 'inspire') autoSearchPending.current = true
   }, [])
   const [originSuggestions, setOriginSuggestions] = useState<{ code: string; city: string; country: string; price?: number }[]>([])
   const [originSuggestionsLoading, setOriginSuggestionsLoading] = useState(false)
+
+  useEffect(() => {
+    if (!autoSearchPending.current) return
+    if (!origin.code) return
+    autoSearchPending.current = false
+    search()
+  }, [origin.code, destination.code, mode])
 
   useEffect(() => {
     if (!origin.code) { setOriginSuggestions([]); return }
@@ -293,16 +298,16 @@ export default function Home() {
               {mode === 'calendar' && (
                 <div className="flex gap-2 mb-4">
                   <button
-                    onClick={() => setTripType('oneway')}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition border ${tripType === 'oneway' ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-600 text-slate-400 hover:text-white'}`}
-                  >
-                    ➡️ Dus simplu
-                  </button>
-                  <button
                     onClick={() => setTripType('roundtrip')}
                     className={`px-4 py-1.5 rounded-lg text-sm font-medium transition border ${tripType === 'roundtrip' ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-600 text-slate-400 hover:text-white'}`}
                   >
                     🔄 Dus-întors
+                  </button>
+                  <button
+                    onClick={() => setTripType('oneway')}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition border ${tripType === 'oneway' ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-600 text-slate-400 hover:text-white'}`}
+                  >
+                    ➡️ Dus simplu
                   </button>
                 </div>
               )}
