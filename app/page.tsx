@@ -453,72 +453,85 @@ export default function Home() {
                     </div>
                   ) : (
                     <>
-                      {/* Outbound */}
-                      <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
-                        <div className="flex items-center justify-between mb-5">
-                          <h2 className="text-white font-bold">
-                            {tripType === 'roundtrip' ? '✈️ Dus — ' : ''}{origin.label} → {destination.label}
-                          </h2>
-                          <span className="text-slate-400 text-sm">
-                            Cel mai ieftin: <span className="text-green-400 font-bold">{Math.round(Math.min(...outboundFares.map(d => d.price)))}€</span>
-                          </span>
-                        </div>
-                        <PriceCalendar
-                          data={outboundFares}
-                          month={outboundMonth}
-                          currency="EUR"
-                          onSelectFare={handleSelectFare}
-                          selectedDate={selectedDate}
-                          onMonthChange={handleOutboundMonthChange}
-                          minMonth={month}
-                        />
-                        <TopFares fares={outboundFares} onSelect={handleSelectFare} selectedDate={selectedDate} />
-                        {selectedDate && (
-                          <BookingCTA
-                            city={destination.label.split(' (')[0]}
-                            date={selectedDate}
-                          />
-                        )}
-                        <NextDestinations
-                          from={destination.code}
-                          fromLabel={destination.label}
-                          destinations={nextDestinations}
-                          loading={nextDestLoading}
-                          onSelect={(code, label) => {
-                            const newOrigin = { code: destination.code, label: destination.label }
-                            const newDest = { code, label }
-                            setOrigin(newOrigin)
-                            setDestination(newDest)
-                            setNextDestinations([])
-                            window.scrollTo({ top: 0, behavior: 'smooth' })
-                            search({ origin: newOrigin, destination: newDest })
-                          }}
-                        />
-                      </div>
-
-                      {/* Return */}
-                      {tripType === 'roundtrip' && returnFares.length > 0 && (
+                      {/* Calendars — side by side for roundtrip */}
+                      <div className={tripType === 'roundtrip' && returnFares.length > 0 ? 'grid grid-cols-1 xl:grid-cols-2 gap-4' : ''}>
                         <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
                           <div className="flex items-center justify-between mb-5">
-                            <h2 className="text-white font-bold">
-                              🔄 Întors — {destination.label} → {origin.label}
+                            <h2 className="text-white font-bold text-sm md:text-base">
+                              {tripType === 'roundtrip' ? '✈️ Dus — ' : ''}{origin.label} → {destination.label}
                             </h2>
-                            <span className="text-slate-400 text-sm">
-                              Cel mai ieftin: <span className="text-green-400 font-bold">{Math.round(Math.min(...returnFares.map(d => d.price)))}€</span>
+                            <span className="text-slate-400 text-xs md:text-sm shrink-0 ml-2">
+                              Min: <span className="text-green-400 font-bold">{Math.round(Math.min(...outboundFares.map(d => d.price)))}€</span>
                             </span>
                           </div>
                           <PriceCalendar
-                            data={returnFares}
-                            month={returnMonth}
+                            data={outboundFares}
+                            month={outboundMonth}
                             currency="EUR"
-                            onSelectFare={handleSelectReturnFare}
+                            onSelectFare={handleSelectFare}
                             selectedDate={selectedDate}
-                            onMonthChange={handleReturnMonthChange}
+                            onMonthChange={handleOutboundMonthChange}
                             minMonth={month}
                           />
-                          <TopFares fares={returnFares} onSelect={handleSelectReturnFare} selectedDate={selectedDate} />
                         </div>
-                      )}
+
+                        {tripType === 'roundtrip' && returnFares.length > 0 && (
+                          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                            <div className="flex items-center justify-between mb-5">
+                              <h2 className="text-white font-bold text-sm md:text-base">
+                                🔄 Întors — {destination.label} → {origin.label}
+                              </h2>
+                              <span className="text-slate-400 text-xs md:text-sm shrink-0 ml-2">
+                                Min: <span className="text-green-400 font-bold">{Math.round(Math.min(...returnFares.map(d => d.price)))}€</span>
+                              </span>
+                            </div>
+                            <PriceCalendar
+                              data={returnFares}
+                              month={returnMonth}
+                              currency="EUR"
+                              onSelectFare={handleSelectReturnFare}
+                              selectedDate={selectedDate}
+                              onMonthChange={handleReturnMonthChange}
+                              minMonth={month}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* TopFares — below both calendars, same grid layout */}
+                      <div className={tripType === 'roundtrip' && returnFares.length > 0 ? 'grid grid-cols-1 xl:grid-cols-2 gap-4' : ''}>
+                        <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                          <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide mb-3">
+                            {tripType === 'roundtrip' ? 'Cele mai ieftine zile — Dus' : 'Cele mai ieftine zile'}
+                          </p>
+                          <TopFares fares={outboundFares} onSelect={handleSelectFare} selectedDate={selectedDate} />
+                          {selectedDate && (
+                            <BookingCTA city={destination.label.split(' (')[0]} date={selectedDate} />
+                          )}
+                        </div>
+                        {tripType === 'roundtrip' && returnFares.length > 0 && (
+                          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide mb-3">Cele mai ieftine zile — Întors</p>
+                            <TopFares fares={returnFares} onSelect={handleSelectReturnFare} selectedDate={selectedDate} />
+                          </div>
+                        )}
+                      </div>
+
+                      <NextDestinations
+                        from={destination.code}
+                        fromLabel={destination.label}
+                        destinations={nextDestinations}
+                        loading={nextDestLoading}
+                        onSelect={(code, label) => {
+                          const newOrigin = { code: destination.code, label: destination.label }
+                          const newDest = { code, label }
+                          setOrigin(newOrigin)
+                          setDestination(newDest)
+                          setNextDestinations([])
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                          search({ origin: newOrigin, destination: newDest })
+                        }}
+                      />
                     </>
                   )
                 ) : mode === 'multihop' ? (
